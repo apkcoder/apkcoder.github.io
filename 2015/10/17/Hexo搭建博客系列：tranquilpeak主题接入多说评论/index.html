@@ -6,43 +6,31 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="MoTalks">
-    <title>你是想读书，还是想读完书(二)？ - MoTalks</title>
+    <title>Hexo搭建博客系列：tranquilpeak主题接入多说评论 - MoTalks</title>
     <meta name="author" content="Mo Lin">
     
         <link rel="icon" href="/assets/images/favicon.ico">
     
     
-    <meta name="description" content="读不懂并不妨碍读完 
-
-长期以来，我最自得的本领之一就是读书的时候，即便读不懂都能读得完——这几乎是最重要的本领，尤其是在应对系统复杂的知识技能的时候。
-这不是谁教我的，但我就那么会了。不过，想想看，应该很早就有人意识到这个本领的重要性了罢——要不怎么会有古人留下训诫呢，虽然只有泛泛的一句：『读书千遍其义自见』。
-讲述复杂知识的书籍，常常骨子里是『类递归结构』——若想深入理解前面出现的概念，需要深">
+    <meta name="description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：　　首先在Hexo的_config.yml中添加多说的">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="你是想读书，还是想读完书(二)？">
-<meta property="og:url" content="http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/index.html">
+<meta property="og:title" content="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
+<meta property="og:url" content="http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/index.html">
 <meta property="og:site_name" content="MoTalks">
-<meta property="og:description" content="读不懂并不妨碍读完 
-
-长期以来，我最自得的本领之一就是读书的时候，即便读不懂都能读得完——这几乎是最重要的本领，尤其是在应对系统复杂的知识技能的时候。
-这不是谁教我的，但我就那么会了。不过，想想看，应该很早就有人意识到这个本领的重要性了罢——要不怎么会有古人留下训诫呢，虽然只有泛泛的一句：『读书千遍其义自见』。
-讲述复杂知识的书籍，常常骨子里是『类递归结构』——若想深入理解前面出现的概念，需要深">
-<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks2015-09-08-anthonydelanoix-002.jpg">
-<meta property="og:updated_time" content="2015-10-15T15:24:32.000Z">
+<meta property="og:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：　　首先在Hexo的_config.yml中添加多说的">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg">
+<meta property="og:updated_time" content="2015-10-17T09:24:08.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="你是想读书，还是想读完书(二)？">
-<meta name="twitter:description" content="读不懂并不妨碍读完 
-
-长期以来，我最自得的本领之一就是读书的时候，即便读不懂都能读得完——这几乎是最重要的本领，尤其是在应对系统复杂的知识技能的时候。
-这不是谁教我的，但我就那么会了。不过，想想看，应该很早就有人意识到这个本领的重要性了罢——要不怎么会有古人留下训诫呢，虽然只有泛泛的一句：『读书千遍其义自见』。
-讲述复杂知识的书籍，常常骨子里是『类递归结构』——若想深入理解前面出现的概念，需要深">
+<meta name="twitter:title" content="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
+<meta name="twitter:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：　　首先在Hexo的_config.yml中添加多说的">
     
     
     
         <meta property="og:image" content="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=640"/>
     
     
-        <meta property="og:image" content="/2015/10/15/你是想读书，还是想读完书（二）？/http://7xnk0a.com1.z0.glb.clouddn.com/motalks2015-09-08-anthonydelanoix-002.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/http://7xnk0a.com1.z0.glb.clouddn.com/motalks2015-09-08-anthonydelanoix-002.jpg" />
+        <meta property="og:image" content="/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" />
     
     
     
@@ -196,13 +184,13 @@
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            你是想读书，还是想读完书(二)？
+            Hexo搭建博客系列：tranquilpeak主题接入多说评论
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" content="Thu Oct 15 2015 22:53:54 GMT+0800">
+    <time itemprop="datePublished" content="Sat Oct 17 2015 16:10:00 GMT+0800">
 	
-		    10月 15, 2015
+		    10月 17, 2015
     	
     </time>
     
@@ -211,20 +199,34 @@
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks2015-09-08-anthonydelanoix-002.jpg" alt="此处输入图片的描述"></p>
-<blockquote>
-<p>读不懂并不妨碍读完 </p>
+            <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" alt="此处输入图片的描述"></p>
+<p>　　Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。<br>　　<br>　　多说的网友也提供了<a href="http://dev.duoshuo.com/threads/541d3b2b40b5abcd2e4df0e9" target="_blank" rel="external">教程</a>，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。<br>　　<br>　　tranquilpeak主题接入多说教程如下：<br>　　首先在Hexo的<font color="red">_config.yml</font>中添加多说的配置：<br>　　<code>duoshuo_shortname: 你站点的short_name</code><br>　　<br>    　　再修改themes\tranquilpeak\layout\partial\post.ejs模板文件。找到这段代码：<br>    　　<code>&lt;% if (post.comments &amp;&amp; theme.disqus_shortname) { %&gt;
+           　　 
+           &lt;%- partial(&#39;post/disqus&#39;) %&gt;
+        　　　&lt;% } %&gt;</code><br>        　　　<br>    替换为</p>
+<pre><code><span class="tag">&lt;<span class="title">%</span> <span class="attribute">if</span> (<span class="attribute">post.comments</span> &amp;&amp; <span class="attribute">config.duoshuo_shortname</span>){ %&gt;</span>
+<span class="tag">&lt;<span class="title">section</span> <span class="attribute">id</span>=<span class="value">"comments"</span>&gt;</span>
+<span class="comment">&lt;!-- 多说评论框 start --&gt;</span>
+<span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"ds-thread"</span> <span class="attribute">data-thread-key</span>=<span class="value">"&lt;%= post.layout %&gt;-&lt;%= post.slug %&gt;"</span> <span class="attribute">data-title</span>=<span class="value">"&lt;%= post.title %&gt;"</span> <span class="attribute">data-url</span>=<span class="value">"&lt;%= page.permalink %&gt;"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+<span class="comment">&lt;!-- 多说评论框 end --&gt;</span>
+<span class="comment">&lt;!-- 多说公共JS代码 start (一个网页只需插入一次) --&gt;</span>
+<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+<span class="keyword">var</span> duoshuoQuery = {short_name:<span class="string">'&lt;%= config.duoshuo_shortname %&gt;'</span>};
+  (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{
+    <span class="keyword">var</span> ds = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);
+    ds.type = <span class="string">'text/javascript'</span>;ds.async = <span class="literal">true</span>;
+    ds.src = (<span class="built_in">document</span>.location.protocol == <span class="string">'https:'</span> ? <span class="string">'https:'</span> : <span class="string">'http:'</span>) + <span class="string">'//static.duoshuo.com/embed.js'</span>;
+    ds.charset = <span class="string">'UTF-8'</span>;
+    (<span class="built_in">document</span>.getElementsByTagName(<span class="string">'head'</span>)[<span class="number">0</span>] 
+     || <span class="built_in">document</span>.getElementsByTagName(<span class="string">'body'</span>)[<span class="number">0</span>]).appendChild(ds);
+  })();
+  </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+<span class="comment">&lt;!-- 多说公共JS代码 end --&gt;</span>
+<span class="tag">&lt;/<span class="title">section</span>&gt;</span>
+<span class="tag">&lt;<span class="title">%</span> } %&gt;</span>
+</code></pre><blockquote>
+<p>MoTalks: 对于其他主题，可以和我用一样的逻辑去找到相应的代码进行修改。因为多说评论模块肯定是用在文章页面的。所以一般在文章样式的模板页就可以找到相应的代码，很简单吧。不过替换的过程中也遇到过问题。就是直接复制上面代码进行替换后部署报错：<font color="red">Unhandled rejection ReferenceError:/themes/tranquilpeak/layout/_partial/post.ejs:46  &gt;&gt; 46|        &lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.duoshuo_shortname){ %&gt; </font><br>简单分析后，尝试去掉判断条件中的!index 就可以了。不熟悉landscape主题和tranquilpeak主题的代码区别，没确认具体原因，有知道的可以告知下。</p>
 </blockquote>
-<p>长期以来，我最自得的本领之一就是读书的时候，即便读不懂都能读得完——这几乎是最重要的本领，尤其是在应对系统复杂的知识技能的时候。</p>
-<p>这不是谁教我的，但我就那么会了。不过，想想看，应该很早就有人意识到这个本领的重要性了罢——要不怎么会有古人留下训诫呢，虽然只有泛泛的一句：『读书千遍其义自见』。</p>
-<p>讲述复杂知识的书籍，常常骨子里是『类递归结构』——若想深入理解前面出现的概念，需要深入理解后面的概念才行……换句话讲，真正深入理解第一章，往往要在第五章之后才能做到。</p>
-<p>于是，那些有一点点看不懂就放弃，或有一点点弄不明白就驻足不前就会暗里吃亏——因为其无论是谁都在没有走到一定程度之前是不可能彻底领悟的。</p>
-<p>于是，我这种人就占了便宜，因为我们读书的时候，兴致勃勃，哪怕读不懂也不会削减兴趣，而读着读着便恍然大悟已经成了高潮体验的特定场景，甚至在很多的时候，遇到读不懂的地方，反倒产生了对未来高潮的预期……</p>
-<p>遇到读不懂的地方，做个标记就好，继续下去，无论怎样都要读完。一个人有多少智慧，常常可以从他能够忍受多少未知判断出来。带着未知走向终点的过程中，你会发现很多的结可能自然而然地解开了……其实真的用不着读一千遍（古人读一千遍，更可能是那个时候全世界的书也不过那么几本而已），三五遍已经是最多了。</p>
-<blockquote>
-<p>MoTalks:<br>　　这篇文章看到也很久了，初次看到『读不懂并不妨碍读完 』这句话时，有点诧异。毕竟因为很多书籍看不下去就是因为看不懂而产生了烦躁的情况，阅读却是需要以安静的心态进行。<br>　　再看到『一个人有多少智慧，常常可以从他能够忍受多少未知判断出来。』这句话，我就感觉到深深的恶意。大部分喜欢读书的人手头都有很多因为读不懂而放弃的书，这篇文章又提供了另外一个角度来引导你进入一种阅读的flow状态。<br>　　希望大家能和原作者一样慢慢培养起『遇到读不懂的地方，反倒产生了对未来高潮的预期……』</p>
-</blockquote>
-<p><em>原文转自：<a href="http://xiaolai.li/post/107405631535" target="_blank" rel="external">http://xiaolai.li/post/107405631535</a></em></p>
 
             
                 
@@ -237,7 +239,7 @@
             <div class="post-footer-tags">
                 <span class="text-color-light text-small">TAGGED IN</span><br/>
                 
-    <a class="tag tag--primary tag--small t-link" href="/tags/读书/">读书</a>
+    <a class="tag tag--primary tag--small t-link" href="/tags/hexo/">hexo</a>
 
             </div>
         
@@ -246,7 +248,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/"  data-tooltip="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
@@ -254,7 +256,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/14/你是想读书，还是想读完书？/" data-tooltip="你是想读书，还是想读完书？">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/15/你是想读书，还是想读完书（二）？/" data-tooltip="你是想读书，还是想读完书(二)？">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
                     <i class="fa fa-angle-right"></i>
@@ -269,17 +271,17 @@
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -304,7 +306,7 @@
        
   <section id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="post-你是想读书，还是想读完书（二）？" data-title="你是想读书，还是想读完书(二)？" data-url="http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/"></div>
+    <div class="ds-thread" data-thread-key="title-Hexo搭建博客系列：tranquilpeak主题接入多说评论" data-title="Hexo搭建博客系列：tranquilpeak主题接入多说评论" data-url="http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -340,7 +342,7 @@
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/"  data-tooltip="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
@@ -348,7 +350,7 @@
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/14/你是想读书，还是想读完书？/" data-tooltip="你是想读书，还是想读完书？">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/15/你是想读书，还是想读完书（二）？/" data-tooltip="你是想读书，还是想读完书(二)？">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
                     <i class="fa fa-angle-right"></i>
@@ -363,17 +365,17 @@
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -399,17 +401,17 @@
                 <div id="share-options-bar" class="share-options-bar" data-behavior="3">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
