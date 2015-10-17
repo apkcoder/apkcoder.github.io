@@ -12,17 +12,17 @@
         <link rel="icon" href="/assets/images/favicon.ico">
     
     
-    <meta name="description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：　　首先在Hexo的_config.yml中添加多说的">
+    <meta name="description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：首先在Hexo的_config.yml中添加多说的配置">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
 <meta property="og:url" content="http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/index.html">
 <meta property="og:site_name" content="MoTalks">
-<meta property="og:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：　　首先在Hexo的_config.yml中添加多说的">
+<meta property="og:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：首先在Hexo的_config.yml中添加多说的配置">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg">
-<meta property="og:updated_time" content="2015-10-17T09:38:12.000Z">
+<meta property="og:updated_time" content="2015-10-17T10:50:07.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
-<meta name="twitter:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：　　首先在Hexo的_config.yml中添加多说的">
+<meta name="twitter:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：首先在Hexo的_config.yml中添加多说的配置">
     
     
     
@@ -215,10 +215,7 @@ var _hmt = _hmt || [];
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
             <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" alt="此处输入图片的描述"></p>
-<p>　　Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。<br>　　<br>　　多说的网友也提供了<a href="http://dev.duoshuo.com/threads/541d3b2b40b5abcd2e4df0e9" target="_blank" rel="external">教程</a>，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。<br>　　<br>　　tranquilpeak主题接入多说教程如下：<br>　　首先在Hexo的<font color="red">_config.yml</font>中添加多说的配置：<br>　　<code>duoshuo_shortname: 你站点的short_name</code><br>　　<br>    　　再修改themes\tranquilpeak\layout\partial\post.ejs模板文件。找到这段代码：<br>    　　<code>&lt;% if (post.comments &amp;&amp; theme.disqus_shortname) { %&gt;
-           　　 
-           &lt;%- partial(&#39;post/disqus&#39;) %&gt;
-        　　　&lt;% } %&gt;</code><br>        　　　<br>    替换为</p>
+<p>　　Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。<br>　　<br>　　多说的网友也提供了<a href="http://dev.duoshuo.com/threads/541d3b2b40b5abcd2e4df0e9" target="_blank" rel="external">教程</a>，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。<br>　　<br>　　tranquilpeak主题接入多说教程如下：首先在Hexo的<font color="red">_config.yml</font>中添加多说的配置：<br>　　<code>duoshuo_shortname: 你站点的short_name</code><br>　　<br>   再修改<font color="red">themes\tranquilpeak\layout\partial\post.ejs</font>模板文件。找到这段代码：<br>    　　<figure class="highlight"><figcaption><span>if (post.comments && theme.disqus_shortname) &#123; %></span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">       &#12288;&#12288; &#10;       &#60;%- partial(&#39;post/disqus&#39;) %&#62;&#10;    &#12288;&#12288;&#12288;&#60;% &#125; %&#62;&#10;    ```&#12288;&#12288;&#12288;&#10;&#60;font color=red &#62;&#26367;&#25442;&#20026;&#60;/font&#62;</span><br></pre></td></tr></table></figure></p>
 <pre><code><span class="tag">&lt;<span class="title">%</span> <span class="attribute">if</span> (<span class="attribute">post.comments</span> &amp;&amp; <span class="attribute">config.duoshuo_shortname</span>){ %&gt;</span>
 <span class="tag">&lt;<span class="title">section</span> <span class="attribute">id</span>=<span class="value">"comments"</span>&gt;</span>
 <span class="comment">&lt;!-- 多说评论框 start --&gt;</span>
@@ -239,6 +236,7 @@ var _hmt = _hmt || [];
 <span class="comment">&lt;!-- 多说公共JS代码 end --&gt;</span>
 <span class="tag">&lt;/<span class="title">section</span>&gt;</span>
 <span class="tag">&lt;<span class="title">%</span> } %&gt;</span>
+```
 </code></pre><blockquote>
 <p>MoTalks: 对于其他主题，可以和我用一样的逻辑去找到相应的代码进行修改。因为多说评论模块肯定是用在文章页面的。所以一般在文章样式的模板页就可以找到相应的代码，很简单吧。不过替换的过程中也遇到过问题。就是直接复制上面代码进行替换后部署报错：<font color="red">Unhandled rejection ReferenceError:/themes/tranquilpeak/layout/_partial/post.ejs:46  &gt;&gt; 46|        &lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.duoshuo_shortname){ %&gt; </font><br>简单分析后，尝试去掉判断条件中的!index 就可以了。不熟悉landscape主题和tranquilpeak主题的代码区别，没确认具体原因，有知道的可以告知下。</p>
 </blockquote>
