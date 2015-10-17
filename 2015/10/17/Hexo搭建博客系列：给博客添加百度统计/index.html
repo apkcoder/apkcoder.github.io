@@ -6,31 +6,35 @@
     <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="generator" content="MoTalks">
-    <title>Hexo搭建博客系列：tranquilpeak主题接入多说评论 - MoTalks</title>
+    <title>Hexo搭建博客系列：给博客添加百度统计 - MoTalks</title>
     <meta name="author" content="Mo Lin">
     
         <link rel="icon" href="/assets/images/favicon.ico">
     
     
-    <meta name="description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：首先在Hexo的_config.yml中添加多说的配置">
+    <meta name="description" content="这篇教程也是基于tranquilpeak主题的。废话不多说，给你的博客添加百度统计，步骤如下。　首先在百度统计注册个帐号。选择注册百度统计站长版即可，如图一。　　注册登录后，选择网站中心，点击右上角的新增网站，输入网站地址，名称后，行业类别后，即可以点击获取代码，如图二。　　复制代码后按照提供的安装攻略第二条建议操作，如图三。　　在themes/tranquilpeak/layout/_parti">
 <meta property="og:type" content="blog">
-<meta property="og:title" content="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
-<meta property="og:url" content="http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/index.html">
+<meta property="og:title" content="Hexo搭建博客系列：给博客添加百度统计">
+<meta property="og:url" content="http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/index.html">
 <meta property="og:site_name" content="MoTalks">
-<meta property="og:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：首先在Hexo的_config.yml中添加多说的配置">
+<meta property="og:description" content="这篇教程也是基于tranquilpeak主题的。废话不多说，给你的博客添加百度统计，步骤如下。　首先在百度统计注册个帐号。选择注册百度统计站长版即可，如图一。　　注册登录后，选择网站中心，点击右上角的新增网站，输入网站地址，名称后，行业类别后，即可以点击获取代码，如图二。　　复制代码后按照提供的安装攻略第二条建议操作，如图三。　　在themes/tranquilpeak/layout/_parti">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg">
-<meta property="og:updated_time" content="2015-10-17T10:54:53.000Z">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-1@2x.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-2@2x.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-5@2x.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-4@2x.png">
+<meta property="og:updated_time" content="2015-10-17T16:32:20.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
-<meta name="twitter:description" content="Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。　　　　多说的网友也提供了教程，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。　　　　tranquilpeak主题接入多说教程如下：首先在Hexo的_config.yml中添加多说的配置">
+<meta name="twitter:title" content="Hexo搭建博客系列：给博客添加百度统计">
+<meta name="twitter:description" content="这篇教程也是基于tranquilpeak主题的。废话不多说，给你的博客添加百度统计，步骤如下。　首先在百度统计注册个帐号。选择注册百度统计站长版即可，如图一。　　注册登录后，选择网站中心，点击右上角的新增网站，输入网站地址，名称后，行业类别后，即可以点击获取代码，如图二。　　复制代码后按照提供的安装攻略第二条建议操作，如图三。　　在themes/tranquilpeak/layout/_parti">
     
     
     
         <meta property="og:image" content="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=640"/>
     
     
-        <meta property="og:image" content="/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" />
+        <meta property="og:image" content="/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" />
     
     
     
@@ -193,11 +197,11 @@ var _hmt = _hmt || [];
         <div class="post-header main-content-wrap text-left">
     
         <h1 class="post-title" itemprop="headline">
-            Hexo搭建博客系列：tranquilpeak主题接入多说评论
+            Hexo搭建博客系列：给博客添加百度统计
         </h1>
     
     <div class="post-meta">
-    <time itemprop="datePublished" content="Sat Oct 17 2015 16:10:00 GMT+0800">
+    <time itemprop="datePublished" content="Sat Oct 17 2015 23:55:18 GMT+0800">
 	
 		    10月 17, 2015
     	
@@ -214,14 +218,9 @@ var _hmt = _hmt || [];
     
     <div class="post-content markdown" itemprop="articleBody">
         <div class="main-content-wrap">
-            <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" alt="此处输入图片的描述"></p>
-<p>　　Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。<br>　　<br>　　多说的网友也提供了<a href="http://dev.duoshuo.com/threads/541d3b2b40b5abcd2e4df0e9" target="_blank" rel="external">教程</a>，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。<br>　　<br>　　tranquilpeak主题接入多说教程如下：首先在Hexo的<font color="red">_config.yml</font>中添加多说的配置：<br>　　<code>duoshuo_shortname: 你站点的short_name</code><br>　　<br>   再修改<font color="red">themes\tranquilpeak\layout\partial\post.ejs</font>模板文件。找到这段代码：<br>    　　<code>&lt;% if (post.comments &amp;&amp; theme.disqus_shortname) 
-            { %&gt;　　 
-           &lt;%- partial(&#39;post/disqus&#39;) %&gt;
-        　　&lt;% } %&gt;</code><br>        　　　<br>   替换为</p>
-<pre><code><span class="comment"><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">%</span> <span class="attribute">if</span> (<span class="attribute">post.comments</span> &amp;&amp; <span class="attribute">config.duoshuo_shortname</span>)&#123; %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">section</span> <span class="attribute">id</span>=<span class="value">"comments"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说评论框 start --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"ds-thread"</span> <span class="attribute">data-thread-key</span>=<span class="value">"&lt;%= post.layout %&gt;-&lt;%= post.slug %&gt;"</span> <span class="attribute">data-title</span>=<span class="value">"&lt;%= post.title %&gt;"</span> <span class="attribute">data-url</span>=<span class="value">"&lt;%= page.permalink %&gt;"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说评论框 end --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说公共JS代码 start (一个网页只需插入一次) --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript"></span><br><span class="line"><span class="keyword">var</span> duoshuoQuery = &#123;short_name:<span class="string">'&lt;%= config.duoshuo_shortname %&gt;'</span>&#125;;</span><br><span class="line">  (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ds = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</span><br><span class="line">    ds.type = <span class="string">'text/javascript'</span>;ds.async = <span class="literal">true</span>;</span><br><span class="line">    ds.src = (<span class="built_in">document</span>.location.protocol == <span class="string">'https:'</span> ? <span class="string">'https:'</span> : <span class="string">'http:'</span>) + <span class="string">'//static.duoshuo.com/embed.js'</span>;</span><br><span class="line">    ds.charset = <span class="string">'UTF-8'</span>;</span><br><span class="line">    (<span class="built_in">document</span>.getElementsByTagName(<span class="string">'head'</span>)[<span class="number">0</span>] </span><br><span class="line">     || <span class="built_in">document</span>.getElementsByTagName(<span class="string">'body'</span>)[<span class="number">0</span>]).appendChild(ds);</span><br><span class="line">  &#125;)();</span><br><span class="line">  </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说公共JS代码 end --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">section</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">%</span> &#125; %&gt;</span></span><br></pre></td></tr></table></figure></span>
-</code></pre><blockquote>
-<p>MoTalks: 对于其他主题，可以和我用一样的逻辑去找到相应的代码进行修改。因为多说评论模块肯定是用在文章页面的。所以一般在文章样式的模板页就可以找到相应的代码，很简单吧。不过替换的过程中也遇到过问题。就是直接复制上面代码进行替换后部署报错：<font color="red">Unhandled rejection ReferenceError:/themes/tranquilpeak/layout/_partial/post.ejs:46  &gt;&gt; 46|        &lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.duoshuo_shortname){ %&gt; </font><br>简单分析后，尝试去掉判断条件中的!index 就可以了。不熟悉landscape主题和tranquilpeak主题的代码区别，没确认具体原因，有知道的可以告知下。</p>
+            <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" alt="此处输入图片的描述"><br>　这篇教程也是基于tranquilpeak主题的。废话不多说，给你的博客添加百度统计，步骤如下。<br>　首先在<a href="http://tongji.baidu.com/web/welcome/login" target="_blank" rel="external">百度统计</a>注册个帐号。选择注册百度统计站长版即可，如图一。<br>　<img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-1@2x.png" alt="此处输入图片的描述"><br>　注册登录后，选择网站中心，点击右上角的新增网站，输入网站地址，名称后，行业类别后，即可以点击获取代码，如图二。<br>　<img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-2@2x.png" alt="此处输入图片的描述"><br>　复制代码后按照提供的安装攻略第二条建议操作，如图三。<br>　<img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-5@2x.png" alt="此处输入图片的描述"><br>　在<font color="red">themes/tranquilpeak/layout/_partial/head.ejs</font>模板文件中，将先前复制的代码复制在标签前，如图四<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-4@2x.png" alt="此处输入图片的描述"><br>　最后，在回到图二界面，点击网站代码检查，看到显示代码安装即可。等待２０分钟左右点击图一的报告页卡即可观察到各种访问数据。</p>
+<blockquote>
+<p>MoTalks:<br>　　添加统计功能对于专注于知识经验分享的个人博客似乎是可有可无的，可能是原来做草根站长留下的职业病吧。那时候要根据百度统计的数据来分析网站的关键词流量，跳出率，停留时间等等来做SEO优化，一个网站没有统计是不完整的。现在对这个个人博客来说，会评论的人不多，看看这些后台数据，也算是对自己的坚持一种鼓励吧。^-^</p>
 </blockquote>
 
             
@@ -244,7 +243,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/"  data-tooltip="Hexo搭建博客系列：给博客添加百度统计">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
@@ -252,7 +251,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/15/你是想读书，还是想读完书（二）？/" data-tooltip="你是想读书，还是想读完书(二)？">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/" data-tooltip="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
                     <i class="fa fa-angle-right"></i>
@@ -267,17 +266,17 @@ var _hmt = _hmt || [];
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -302,7 +301,7 @@ var _hmt = _hmt || [];
        
   <section id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="title-Hexo搭建博客系列：tranquilpeak主题接入多说评论" data-title="Hexo搭建博客系列：tranquilpeak主题接入多说评论" data-url="http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/"></div>
+    <div class="ds-thread" data-thread-key="title-Hexo搭建博客系列：给博客添加百度统计" data-title="Hexo搭建博客系列：给博客添加百度统计" data-url="http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -338,7 +337,7 @@ var _hmt = _hmt || [];
         <ul class="post-actions post-action-nav">
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/"  data-tooltip="Hexo搭建博客系列：给博客添加百度统计">
+                    <a class="post-action-btn btn btn--disabled">
                 
                     <i class="fa fa-angle-left"></i>
                     <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
@@ -346,7 +345,7 @@ var _hmt = _hmt || [];
             </li>
             <li class="post-action">
                 
-                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/15/你是想读书，还是想读完书（二）？/" data-tooltip="你是想读书，还是想读完书(二)？">
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/" data-tooltip="Hexo搭建博客系列：tranquilpeak主题接入多说评论">
                 
                     <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
                     <i class="fa fa-angle-right"></i>
@@ -361,17 +360,17 @@ var _hmt = _hmt || [];
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -397,17 +396,17 @@ var _hmt = _hmt || [];
                 <div id="share-options-bar" class="share-options-bar" data-behavior="3">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
