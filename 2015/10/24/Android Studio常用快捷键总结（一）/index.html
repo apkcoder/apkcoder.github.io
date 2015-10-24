@@ -1,0 +1,543 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="MoTalks">
+    <title>Android Studio常用快捷键总结（一） - MoTalks</title>
+    <meta name="author" content="Mo Lin">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+    <meta name="description" content="MoTalks:从Eclipse到AndroidStudio，Windows到MacOS。这2次平台的搬迁，As的快捷键设置可让我好一通折腾，这两天终于有时间来整理总结下这些我平时常用快捷键的设置了，这次整理又让我发现了一些好用的快捷键。新技能get！话不多说，走起！
+
+首先说明文中快捷键在如下keymap生效：
+
+Windows: Default
+Linux: Default
+OSX: Mac">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Android Studio常用快捷键总结（一）">
+<meta property="og:url" content="http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/index.html">
+<meta property="og:site_name" content="MoTalks">
+<meta property="og:description" content="MoTalks:从Eclipse到AndroidStudio，Windows到MacOS。这2次平台的搬迁，As的快捷键设置可让我好一通折腾，这两天终于有时间来整理总结下这些我平时常用快捷键的设置了，这次整理又让我发现了一些好用的快捷键。新技能get！话不多说，走起！
+
+首先说明文中快捷键在如下keymap生效：
+
+Windows: Default
+Linux: Default
+OSX: Mac">
+<meta property="og:image" content="http://www.android-studio.org/images/stories/android-studio-0628.jpg">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks03-filestructure.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks04-callinghierarchy.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks05-quickdefinition.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks06-codefolding.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalksToggleBookmarkWithMnemonic.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks07-bookmarks.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks08-findaction.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks09-movelines.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks15-movemethods.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks10-deleteline.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks11-duplicate_lines.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks13-surround_with.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks14-recents.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks15-live_templates.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks16-completestatement.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks17-navigate-previous-changes.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks18-joinlines.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks19-select-in.gif">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/motalks20-unwrap.gif">
+<meta property="og:updated_time" content="2015-10-24T14:43:48.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Studio常用快捷键总结（一）">
+<meta name="twitter:description" content="MoTalks:从Eclipse到AndroidStudio，Windows到MacOS。这2次平台的搬迁，As的快捷键设置可让我好一通折腾，这两天终于有时间来整理总结下这些我平时常用快捷键的设置了，这次整理又让我发现了一些好用的快捷键。新技能get！话不多说，走起！
+
+首先说明文中快捷键在如下keymap生效：
+
+Windows: Default
+Linux: Default
+OSX: Mac">
+    
+    
+    
+        <meta property="og:image" content="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=640"/>
+    
+    
+        <meta property="og:image" content="/2015/10/24/Android Studio常用快捷键总结（一）/http://www.android-studio.org/images/stories/android-studio-0628.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/http://www.android-studio.org/images/stories/android-studio-0628.jpg" />
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css" type="text/css">
+    <!--STYLES END-->
+    
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?50885887af316089d0758da5636c623e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="3">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">MoTalks</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="3">
+    
+        <div class="sidebar-profile">
+            <a href="/#about">
+                
+                    <img class="sidebar-profile-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=90"/>
+                
+            </a>
+            <span class="sidebar-profile-name">Mo Lin</span>
+        </div>
+    
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/ "
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">Home</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-categories"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">Categories</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-tags"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">Tags</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-archives"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">Archive</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link st-search-show-outputs"
+                         href="/#search"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">Search</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/#about"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">About</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link " href="https://github.com/apkcoder" target="_blank">
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/atom.xml"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+
+            
+            <div id="main" data-behavior="3"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            Android Studio常用快捷键总结（一）
+        </h1>
+    
+    <div class="post-meta">
+    <time itemprop="datePublished" content="Sat Oct 24 2015 22:43:18 GMT+0800">
+	
+		    10月 24, 2015
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/开发工具（DevTools）/">开发工具（DevTools）</a>
+
+
+    
+</div>
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p><img src="http://www.android-studio.org/images/stories/android-studio-0628.jpg" alt="图片来自AndroidStudio中文社区"></p>
+<blockquote>
+<p>MoTalks:<br>从Eclipse到AndroidStudio，Windows到MacOS。这2次平台的搬迁，As的快捷键设置可让我好一通折腾，这两天终于有时间来整理总结下这些我平时常用快捷键的设置了，这次整理又让我发现了一些好用的快捷键。新技能get！话不多说，走起！</p>
+</blockquote>
+<p>首先说明文中快捷键在如下keymap生效：</p>
+<ul>
+<li>Windows: Default</li>
+<li>Linux: Default</li>
+<li>OSX: Mac OSX 10.5+</li>
+</ul>
+<hr>
+<p><strong>The File Structure Popup</strong></p>
+<p>KeyMap键名：File Structure<br>Mac cmd+F12(配合fn)  Win/Linux ctrl+F12<br>此快捷键可以调出当前文件的大纲，并且可以通过模糊匹配来快速跳转到指定方法。适合场景：快速跳转到一个你已知名字的方法的位置。类似原eclipse快捷键Ctrl+o，我已自定义该快捷键为Ctrl+o。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks03-filestructure.gif" alt="File Structure"></p>
+<p><strong>The Call Hierarchy Popup</strong></p>
+<p>KeyMap键名：Call Hierarchy<br>Mac ctrl+alt+h  Win/Linux ctrl+alt+h<br>查看某个方法被调用的路径<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks04-callinghierarchy.gif" alt="Call Hierarchy"></p>
+<p><strong>Quick Definition Lookup</strong></p>
+<p>KeyMap键名：Quick Definition<br>Mac alt(fn)+space/cmd+y  Win/Linux ctrl+shift+i<br>在当前文件下快速查看某个方法或者类的实现。在阅读代码梳理逻辑的时候比较好用，不用在不同类中不停的切换了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks05-quickdefinition.gif" alt="Quick Definition"></p>
+<p><strong>Collapse Expand Code Block</strong></p>
+<p>KeyMap键名：Collapse 和 Expand<br>Mac cmd+plus/minus  Win/Linux ctrl+shift+plus/minus</p>
+<blockquote>
+<p>MoTalks：原文Mac下的快捷键是alt+plus/minus,和我本地默认的Mac OSX 10.5+配置不同，如果你的快捷键不生效，可以按键名查找对应的快捷键，下文不再另作说明)</p>
+</blockquote>
+<p>此快捷键可以快速展开和收起一个方法。同样，在阅读代码梳理逻辑的时候比较好用。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks06-codefolding.gif" alt="Collapse Expand Code"></p>
+<p><strong>Bookmarks!</strong></p>
+<p>KeyMap键名：Toggle Bookmark<br>Mac F3  Win/Linux F11<br>添加或取消书签。</p>
+<p>KeyMap键名：Toggle Bookmark With Mnemonic<br>Mac alt+F3  Win/Linux ctrl+F11<br>给书签添加数字，Ctrl+数字可以快速回到书签位置。有木有想到游戏里的技能快捷键。是不是很赞！<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksToggleBookmarkWithMnemonic.png" alt="Toggle Bookmark With Mnemonic"></p>
+<p>KeyMap键名：Show Bookmarks<br>Mac cmd+F3  Win/Linux shift+F11<br>显示所有的书签<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks07-bookmarks.gif" alt="此处输入图片的描述"></p>
+<p><strong>Find Actions</strong></p>
+<p>KeyMap键名：Find Actions<br>Mac cmd+shift+a  Win/Linux ctrl+shift+a<br>可以模糊匹配所有Android Studio可以执行的命令。<br>比如输入rebuild就会出现Rebuild Project的选项，点击即可执行该操作。当你只记得命令找到它在哪里的时候，这快捷键是不是神技能救你于水火之中。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks08-findaction.gif" alt="此处输入图片的描述"></p>
+<p><strong>Move Lines Up/Down</strong></p>
+<p>KeyMap键名：Move Lines Up/Down<br>Mac alt+shift+up/down  Win/Linux alt+shift+up/down<br>将当前行或者选中代码块向上或者向下移动。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks09-movelines.gif" alt="Move Lines Up/Down"></p>
+<p><strong>Move Methods</strong></p>
+<p>KeyMap键名：Move Statement<br>Mac cmd+shift+up/down Win/Linux ctrl+shift+up/down<br>和移动行类似，这个是移动整个函数。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks15-movemethods.gif" alt="Move Methods"></p>
+<p><strong>Delete Line</strong></p>
+<p>KeyMap键名：Delete Line<br>Mac cmd+backspace  Win/Linux ctrl+y<br>同原eclipse的Ctrl+D。很常用的快捷键，没啥说的。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks10-deleteline.gif" alt="Delete Line"></p>
+<p><strong>Duplicate Lines</strong></p>
+<p>KeyMap键名：Delete Line<br>Mac cmd+d   Win/Linux ctrl+d<br>复制行，没啥说的。写对象属性的时候经常用到。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks11-duplicate_lines.gif" alt="Duplicate Lines"></p>
+<p><strong>Surround with</strong></p>
+<p>KeyMap键名：Surround with<br>Mac cmd+alt+t   Win/Linux ctrl+alt+t<br>会将你选择的代码块用你选择的函数包裹起来。如if/else,try/catch等，如果没选择代码的话会将当前行包括进去。效率又提高了有木有！炒鸡好用！<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks13-surround_with.gif" alt="Surround with"></p>
+<p><strong>Recents</strong></p>
+<p>KeyMap键名：Recent Files<br>Mac cmd+e   Win/Linux ctrl+e<br>终于找到你啦，一直就再想什么时候能有和浏览器一样的最近打开的标签的功能。原来早就有这个功能没发现。这样不小心关闭一个类，就不用到处去找啦，又省不少时间，炸裂啊！<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks14-recents.gif" alt="Recents"></p>
+<p><strong>Live Templates</strong></p>
+<p>KeyMap键名：insert live templates<br>Mac cmd+j  Win/Linux ctrl+j<br>快速生成模板代码，比如要写个if(some == null){}这类型的代码<br>只要写下if按下快捷键。就会弹出各种匹配的选项，选择ifn就可以生成上面这个代码。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks15-live_templates.gif" alt="Live Templates"></p>
+<p><strong>Complete Statement</strong></p>
+<p>KeyMap键名：insert live templates<br>Mac cmd+shift+enter  Win/Linux ctrl+shift+enter<br>比较AS自动提示的完成的代码E.g. if()，使用这个快捷键会生成更完整的代码块。如：if(){}。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks16-completestatement.gif" alt="此处输入图片的描述"></p>
+<p><strong>Last Edit Location</strong></p>
+<p>KeyMap键名：Last Edit Location<br>Mac cmd+shift+backspace  Win/Linux ctrl+shift+backspace<br>回退到上个编辑光标处。在几个Activity调试的时候很好用。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks17-navigate-previous-changes.gif" alt="Last Edit Location"></p>
+<p><strong>Join Lines and Literals</strong></p>
+<p>KeyMap键名：Join Lines<br>Mac cmd+shift+j  Win/Linux ctrl+shift+j<br>也是第一次知道这功能，好腻害的样子，可以合并2行之间的空白，如果两行代码有关联，还可以帮你优化下。如果两行注释要合并的话会自动去掉多余的//。这个快捷键可以装的一手好B了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks18-joinlines.gif" alt="Join Lines"></p>
+<p><strong>Select In</strong></p>
+<p>KeyMap键名：Select In…<br>Mac alt+f1 Win/Linux alt+f1<br>在当前类使用这个快捷键可以快速在文件夹中找到这个类文件。还有其他选项大家可以摸索下。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks19-select-in.gif" alt="Select In"></p>
+<p><strong>Unwrap/Remove</strong></p>
+<p>KeyMap键名：Unwrap/Remove<br>Mac cmd+shift+delete(fn)  Win/Linux ctrl+shift+delete<br>选择代码，使用快捷键会识别出代码当中使用的代码模板（如try/catch，if()之类的）选择后就会自动帮你去除该代码模板。终于不用自己在复杂的代码中删除代码时去对一堆的括号了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks20-unwrap.gif" alt="Unwrap/Remove"></p>
+<blockquote>
+<p>MoTalks:花了一晚上，才搬运翻译了这些。国外的大大还要制作动图，真的是花心思啊。看看国内就没有一个能把快捷键教程做的这么精细的。大赞，这么只翻译了前2篇的内容。总共有6篇。今后会继续搬运回来。文末会附上链接，等不及的可以直接去看啦。</p>
+</blockquote>
+<p>本文翻译自：<br><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/" target="_blank" rel="external">http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/</a><br><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-2/" target="_blank" rel="external">http://www.developerphil.com/android-studio-tips-of-the-day-roundup-2/</a></p>
+
+            
+                
+
+            
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">TAGGED IN</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/AndroidStudioTips/">AndroidStudioTips</a>
+
+            </div>
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/" data-tooltip="Hexo搭建博客系列：给博客添加百度统计">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+       
+  <section id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-Android Studio常用快捷键总结（一）" data-title="Android Studio常用快捷键总结（一）" data-url="http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'motalks'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+  </section>
+  
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2015 Mo Lin. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="3">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/" data-tooltip="Hexo搭建博客系列：给博客添加百度统计">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="3">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=110"/>
+        
+            <h4 id="about-card-name">Mo Lin</h4>
+        
+            <h5 id="about-card-bio"><p>author.bio</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>author.job</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                BeiJing
+            </h5>
+        
+    </div>
+</div>
+
+        <div id="cover" style="background-image:url('http://res.cloudinary.com/tranquilpeak-hexo-theme/image/upload/v1438975482/v1.3.0-cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js" type="text/javascript"></script>
+<!--SCRIPTS END-->
+
+
+
+</html>
