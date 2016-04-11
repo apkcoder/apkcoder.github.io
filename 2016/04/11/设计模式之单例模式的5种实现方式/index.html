@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="MoTalks-墨说">
+    <title> - MoTalks-墨说</title>
+    <meta name="author" content="Mo Lin">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+    <meta name="description" content="#设计模式之单例模式的5种实现方式date:2016-04-11 23:15:18categories:设计模式标签（空格分隔）： 设计模式 单例模式
+
+
+
+单例模式是应用最广的模式之一，也可能是很多初级工程师唯一会使用的设计模式
+
+看到这里，我默默的低下了头，也许其他模式也使用过，但是可以了然于心的也只有单例模式了，因为面试的时候单例模式是必考的。
+今天再回头看看单例模式，还是觉得有必要好好总结">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="MoTalks-墨说">
+<meta property="og:url" content="http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/index.html">
+<meta property="og:site_name" content="MoTalks-墨说">
+<meta property="og:description" content="#设计模式之单例模式的5种实现方式date:2016-04-11 23:15:18categories:设计模式标签（空格分隔）： 设计模式 单例模式
+
+
+
+单例模式是应用最广的模式之一，也可能是很多初级工程师唯一会使用的设计模式
+
+看到这里，我默默的低下了头，也许其他模式也使用过，但是可以了然于心的也只有单例模式了，因为面试的时候单例模式是必考的。
+今天再回头看看单例模式，还是觉得有必要好好总结">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/23802445-1_w_1.jpg">
+<meta property="og:updated_time" content="2016-04-11T15:16:01.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MoTalks-墨说">
+<meta name="twitter:description" content="#设计模式之单例模式的5种实现方式date:2016-04-11 23:15:18categories:设计模式标签（空格分隔）： 设计模式 单例模式
+
+
+
+单例模式是应用最广的模式之一，也可能是很多初级工程师唯一会使用的设计模式
+
+看到这里，我默默的低下了头，也许其他模式也使用过，但是可以了然于心的也只有单例模式了，因为面试的时候单例模式是必考的。
+今天再回头看看单例模式，还是觉得有必要好好总结">
+    
+    
+    
+        <meta property="og:image" content="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=640"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css" type="text/css">
+    <!--STYLES END-->
+    
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?50885887af316089d0758da5636c623e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="3">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">MoTalks-墨说</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="3">
+    
+        <div class="sidebar-profile">
+            <a href="/#about">
+                
+                    <img class="sidebar-profile-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=90"/>
+                
+            </a>
+            <span class="sidebar-profile-name">Mo Lin</span>
+        </div>
+    
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/ "
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">首页</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-categories"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">文章分类</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-tags"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">文章标签</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-archives"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">文章存档</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link st-search-show-outputs"
+                         href="/#search"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">搜索</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/#about"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">关于</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link " href="https://github.com/apkcoder" target="_blank">
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/atom.xml"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+
+            
+            <div id="main" data-behavior="3"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            (no title)
+        </h1>
+    
+    <div class="post-meta">
+    <time itemprop="datePublished" content="Mon Apr 11 2016 23:16:03 GMT+0800">
+	
+		    4月 11, 2016
+    	
+    </time>
+    
+</div>
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>#设计模式之单例模式的5种实现方式<br>date:2016-04-11 23:15:18<br>categories:设计模式<br>标签（空格分隔）： 设计模式 单例模式</p>
+<hr>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/23802445-1_w_1.jpg" alt="此处输入图片的描述"></p>
+<blockquote>
+<p>单例模式是应用最广的模式之一，也可能是很多初级工程师唯一会使用的设计模式</p>
+</blockquote>
+<p>看到这里，我默默的低下了头，也许其他模式也使用过，但是可以了然于心的也只有单例模式了，因为面试的时候单例模式是必考的。</p>
+<p>今天再回头看看单例模式，还是觉得有必要好好总结一下。</p>
+<ol>
+<li><p><strong>懒汉，饥汉模式</strong><br>这是刚开始学习单例模最先接触的两种实现方式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">*  饿汉式</span><br><span class="line">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton uniqueInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> uniqueInstance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line">* 饱汉式</span><br><span class="line">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton uniqueInstance;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="comment">//一般饱汉式单例是没有添加 synchronized 同步关键字的，添加后可以解决线程安全问题。</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(uniqueInstance == <span class="keyword">null</span>)&#123;</span><br><span class="line">            uniqueInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> uniqueInstance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>饿汉式的缺点是类一加载就会实例化对象，提前占用系统资源。<br>饱汉式的缺点是会有线程安全问题。在不考虑多线程的情况下可以使用。在多线程时，可能线程1在     new Singleton()时（代码24行），被线程2抢占，此时线程1的 uniqueInstance 还没被 new           出来，线程2又会进去 new Singleton()的流程。这时就会产生两个 uniqueInstance 对象。解决该问题，最简单的方法就是给getInstance()方法添加synchronized同步关键字。但是同步的开销你懂，是很大的。为了更好的解决饱汉式单例的线程安全问题，就该轮到 DCL 出场了。</p>
+</li>
+<li>Double CheckLock(DCL)实现单例<br>double-checked locking翻译过来就是双重检查加锁。该方式的优点是既能够在需要时才初始化单例，又能够保证线程安全，且单例对象初始化后调用getInstance不再进行同步锁。代码如下所示：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton uniqueInstance;</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(uniqueInstance == <span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="keyword">synchronized</span>(Singleton.class)&#123;</span><br><span class="line">                    <span class="keyword">if</span>(uniqueInstance == <span class="keyword">null</span>)&#123;</span><br><span class="line">                        uniqueInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">             &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> uniqueInstance;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>Tips:在 JDK1.5之前，DCL会存在失效问题问题。鉴于现在大家使用的JDK版本都是1.6+。所以该问题不展开来讲。DCL在线程安全上还是存在挺多争议，有兴趣的可以看看这篇文章：<a href="http://marlonyao.iteye.com/blog/875420" target="_blank" rel="external">Java 线程安全兼谈 DCL</a>。</p>
+<blockquote>
+<p>在简单的总结下 DCL ：<br>优点：资源利用率高，第一次执行getInstance时单例对象才会被实例化，效率高。<br>缺点：第一次加载时反应稍慢，也由于Java内存模型的原因偶尔会失败。在高并发环境下也有一定的缺陷，虽然发生概率很小。<br>DCL模式是使用最多的单例实现方式，它能够在需要时才实例化单例对象，并且能够在绝大多数情况下保证单例对象的唯一性，除非你的代码在并发场景比较复杂或者在低于JDK6版本下使用，否则，这种方式一般可以满足需求。</p>
+<font color="red">在《Java并发编程实践》一书最后谈到这个问题，并指出这种”优化”是丑陋的，不赞成使用，而建议使用静态内部类单例模式替代。</font>
+
+</blockquote>
+<ol>
+<li>静态内部类单例模式<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.sInstance;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> class <span class="title">SingletonHolder</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> Singleton sInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>我们使用了Java的静态内部类，Singleton没有static的属性，因此并不会被初始化，直到调用getInstance()的时候，会首先加载 SingletonHolder类，该类有一个static的Singleton实例sInstance，因为会调用Singleton的构造方法，然后通过getInstance()把这个内部类的sInstance返回给使用者，由于sInstance是static的，因此不会构造多次。</p>
+<p>又因为SingletonHodler是私有静态内部类，所以不会被其他类知道，同样，static语义也要求不能有多个实例存在。并且，JSL 规范定义，类的构造函数必须是原子性的，非并发，因此无需添加同步块，同样，由于这个构造是并发的，所以getInstance()也不需要添加同步。</p>
+<p>所以，这种单例模式不仅是线程安全的，也能够保证单例对象的唯一性，同时也延迟了单例的实例化。《Effiective Java》一书也推荐了这种方式。</p>
+<ol>
+<li>枚举单例<br>写法最简单的单例模式就是枚举，枚举在Java中与普通的类一样，不仅能够有字段，还能够有自己的方法，最重要的是默认的枚举实例的创建是线程安全的，并且在任何情况下它都是一个单例，为什么这么说呢，在上述的几种单例模式实现中，在一个情况下它们会出现重新创建对象的情况，那就是反序列化。</li>
+</ol>
+<p>通过反序列化可以将一个单例的实例对象写到磁盘，然后再读回来，从而有效的获得一个实例，即使构造函数是私有的，反序列化时依然可以通过特殊的途径去创建类的一个新的实例，相当于调用该类的构造函数。反序列化操作提供了一个很特别的钩子函数，readResolve(),这个方法可以让开发人员控制对象的反序列化，例如，上诉几个示例中如果要杜绝单例对象在被反序列化时重新生成对象那必须加入如下方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于枚举，并不存在这个问题，因为即使反序列化它也不会重新生成新的实例。枚举单例这样写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> SingletonEnum&#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Syetem.out.println(<span class="string">"do sth."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>使用容器实现单例模式<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonManager</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, Object&gt; objMap = <span class="keyword">new</span> HashMap&lt;String,Object&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">registerService</span><span class="params">(String key, Object instance)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!objMap.containsKey(key))&#123;</span><br><span class="line">            objMap.put(key,instance);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getServices</span><span class="params">(String key)</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> objMap.get(key);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>用SingletonManager 将多种的单例类统一管理，在使用时根据key获取对象对应类型的对象。这种方式使得我们可以管理多种类型的单例，并且在使用时可以通过统一的接口进行获取操作，降低了用户的使用成本，也对用户隐藏了具体实现，降低了耦合度。</p>
+</blockquote>
+<p><strong>总结</strong><br>不管以上述哪种模式去实现单例模式，其核心的思想都是将构造函数私有化，并且通过静态方法获取一个唯一的单例，在这个获取的过程中我们必须保证线程安全，防止反序列化导致重新生成新的实例对象等问题。具体采用哪种实现方式，取决于项目本身。个人推荐通过枚举方式去实现单例，代码简单，线程安全，反序列化保证实例对象唯一。</p>
+
+            
+                
+
+            
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/11/09/Android Studio常用快捷键总结（三）/" data-tooltip="Android Studio常用快捷键总结（三）">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+       
+  <section id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-设计模式之单例模式的5种实现方式" data-title="" data-url="http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'motalks'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+  </section>
+  
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 Mo Lin. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="3">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2015/11/09/Android Studio常用快捷键总结（三）/" data-tooltip="Android Studio常用快捷键总结（三）">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="3">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=110"/>
+        
+            <h4 id="about-card-name">Mo Lin</h4>
+        
+            <h5 id="about-card-bio"><p>林墨</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>程序猿</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                BeiJing
+            </h5>
+        
+    </div>
+</div>
+
+        <div id="cover" style="background-image:url('http://res.cloudinary.com/tranquilpeak-hexo-theme/image/upload/v1438975482/v1.3.0-cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js" type="text/javascript"></script>
+<!--SCRIPTS END-->
+
+
+
+</html>
