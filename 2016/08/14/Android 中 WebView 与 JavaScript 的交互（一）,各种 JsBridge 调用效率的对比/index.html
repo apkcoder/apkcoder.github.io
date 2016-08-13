@@ -34,7 +34,7 @@
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png">
-<meta property="og:updated_time" content="2016-08-13T17:43:46.000Z">
+<meta property="og:updated_time" content="2016-08-13T17:47:24.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比">
 <meta name="twitter:description" content="以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
@@ -240,38 +240,25 @@ var _hmt = _hmt || [];
 </ol>
 <p><strong>测试用例：</strong><br>在 web 页面上发起请求时记下当前的时间t,并通过 JsBridge伪协议将时间 t 传递给 Native端，Native端收到请求时记录下当前系统时间t2。将t2-t所得的时候就是这次 web 端和 Native端通信的耗时。同样操作执行20次，通过平均时间来比较性能。</p>
 <p><strong>测试函数</strong></p>
-<ol>
-<li>ShouldOverrideUrlLoading<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></li>
-</ol>
+<p><strong>1.ShouldOverrideUrlLoading</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
 <p>Native端通过重载ShouldOverrideUrlLoading方法进行拦截主资源请求，解析 JsBridge伪协议来获得相关数据。</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
-<ol>
-<li><p>ShouldInterceptRequest</p>
+<p><strong>2.ShouldInterceptRequest</strong></p>
 <p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldInterceptRequest.png" alt="此处输入图片的描述"></p>
-</li>
-</ol>
 <p>Native端通过重载ShouldInterceptRequest方法进行拦截子资源请求，解析 JsBridge伪协议来获得相关数据。</p>
 <p>Android 5.0以下系统版本提供的拦截方法：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest.png" alt="此处输入图片的描述"></p>
 <p>Android 5.0及以上系统版本提供的拦截方法可以获得更为丰富的页面信息。在WebResourceRequest有如下方法：getUrl()，isForMainFrame(),hasGesture(),getMethod(),getRequestHeaders()；其中getRequestHeaders()方法可以获得的请求信息最多了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest_lollipop.png" alt="此处输入图片的描述"></p>
-<ol>
-<li>Prompt方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_prompt.png" alt="此处输入图片的描述"></li>
-</ol>
+<p><strong>3.Prompt方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_prompt.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onJsPrompt方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsPrompt.png" alt="此处输入图片的描述"></p>
-<ol>
-<li>Alert方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_alert.png" alt="此处输入图片的描述"></li>
-</ol>
+<p><strong>4.Alert方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_alert.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onJsAlert方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsAlert.png" alt="此处输入图片的描述"></p>
-<ol>
-<li>Confirm方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_confirm.png" alt="此处输入图片的描述"></li>
-</ol>
+<p><strong>5.Confirm方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_confirm.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onJsConfirm方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsConfirm.png" alt="此处输入图片的描述"></p>
-<ol>
-<li>Console方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png" alt="此处输入图片的描述"></li>
-</ol>
+<p><strong>6.Console方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onConsoleMessage方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png" alt="此处输入图片的描述"></p>
 <p><strong>测试结果</strong><br>数据如下图：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png" alt="测试结果"></p>
