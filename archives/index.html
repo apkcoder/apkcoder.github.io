@@ -186,29 +186,40 @@ var _hmt = _hmt || [];
 <section class="postShorten-group main-content-wrap">
     
         
+            
+                
+            
         
-                <article class="postShorten" itemscope itemType="http://schema.org/BlogPosting">
+        
+            <article class="postShorten postShorten--thumbnailimg" itemscope itemType="http://schema.org/BlogPosting">
         
             <div class="postShorten-wrap">
                 <div class="postShorten-header">
                     <h1 class="postShorten-title" itemprop="headline">
                         
-                                <a class="link-unstyled" href="/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">(no title)</a>
+                                <a class="link-unstyled" href="/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比</a>
                         
                     </h1>
                     <div class="postShorten-meta">
-    <time itemprop="datePublished" content="Sun Aug 14 2016 01:15:07 GMT+0800">
+    <time itemprop="datePublished" content="Sun Aug 14 2016 01:10:18 GMT+0800">
 	
 		    8月 14, 2016
     	
     </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/categories/WebView/">WebView</a>
+
+
     
 </div>
                 </div>
                 <div class="postShorten-excerpt" itemprop="articleBody">
                     
                         <p>
-                            Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比date: 2016-08-14 01:10:18categories: WebViewtags: JsBridge WebViewthumbnailImage: http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&amp;fm<br>
+                            以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
+现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下<br>
                     
                     
                         
@@ -221,6 +232,11 @@ var _hmt = _hmt || [];
                     
                 </div>
             </div>
+            
+                <div class="postShorten-thumbnailimg">
+                    <img alt="" itemprop="image" src="http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&amp;fm=21&amp;gp=0.jpg"/>
+                </div>
+                
             
         </article>
     
