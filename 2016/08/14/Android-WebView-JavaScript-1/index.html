@@ -16,7 +16,7 @@
 现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下">
 <meta property="og:type" content="blog">
 <meta property="og:title" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比">
-<meta property="og:url" content="http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/index.html">
+<meta property="og:url" content="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/index.html">
 <meta property="og:site_name" content="MoTalks-墨说">
 <meta property="og:description" content="以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
 现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下">
@@ -45,8 +45,8 @@
         <meta property="og:image" content="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=640"/>
     
     
-        <meta property="og:image" content="/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&fm=21&gp=0.jpg"/>
-        <meta class="swiftype" name="image" data-type="enum" content="http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&fm=21&gp=0.jpg" />
+        <meta property="og:image" content="/2016/08/14/Android-WebView-JavaScript-1/http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&fm=21&gp=0.jpg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&fm=21&gp=0.jpg" />
     
     
     
@@ -308,17 +308,17 @@ var _hmt = _hmt || [];
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -343,7 +343,7 @@ var _hmt = _hmt || [];
        
   <section id="comments">
     <!-- 多说评论框 start -->
-    <div class="ds-thread" data-thread-key="post-Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比" data-title="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比" data-url="http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/"></div>
+    <div class="ds-thread" data-thread-key="post-Android-WebView-JavaScript-1" data-title="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比" data-url="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/"></div>
     <!-- 多说评论框 end -->
     <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
     <script type="text/javascript">
@@ -402,17 +402,17 @@ var _hmt = _hmt || [];
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-google-plus"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-facebook-official"></i>
             </a>
         </li>
         <li class="post-action hide-xs">
-            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-twitter"></i>
             </a>
         </li>
@@ -438,17 +438,17 @@ var _hmt = _hmt || [];
                 <div id="share-options-bar" class="share-options-bar" data-behavior="3">
     <ul class="share-options">
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
             </a>
         </li>
         <li class="share-option">
-            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
                 <i class="fa fa-twitter"></i><span>Share on Twitter</span>
             </a>
         </li>
