@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    
+<head>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="MoTalks-墨说">
+    <title> - MoTalks-墨说</title>
+    <meta name="author" content="Mo Lin">
+    
+        <link rel="icon" href="/assets/images/favicon.ico">
+    
+    
+    <meta name="description" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比date: 2016-08-14 01:10:18categories: WebViewtags: JsBridge WebViewthumbnailImage: http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&amp;amp;fm">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="MoTalks-墨说">
+<meta property="og:url" content="http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/index.html">
+<meta property="og:site_name" content="MoTalks-墨说">
+<meta property="og:description" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比date: 2016-08-14 01:10:18categories: WebViewtags: JsBridge WebViewthumbnailImage: http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&amp;amp;fm">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_ShouldOverrideUrlLoading.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldInterceptRequest.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest_lollipop.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_prompt.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsPrompt.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_alert.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsAlert.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_confirm.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsConfirm.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png">
+<meta property="og:updated_time" content="2016-08-13T17:14:57.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MoTalks-墨说">
+<meta name="twitter:description" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比date: 2016-08-14 01:10:18categories: WebViewtags: JsBridge WebViewthumbnailImage: http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&amp;amp;fm">
+    
+    
+    
+        <meta property="og:image" content="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=640"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style.min.css" type="text/css">
+    <!--STYLES END-->
+    
+    <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?50885887af316089d0758da5636c623e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+
+    <body>
+        <div id="blog">
+            <header id="header" data-behavior="3">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <h1 class="header-title">
+        <a class="header-title-link" href="/ ">MoTalks-墨说</a>
+    </h1>
+    
+        <a class="header-right-picture" href="/#about">
+            <img class="header-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=90"/>
+        </a>
+    
+</header>
+            <nav id="sidebar" data-behavior="3">
+    
+        <div class="sidebar-profile">
+            <a href="/#about">
+                
+                    <img class="sidebar-profile-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=90"/>
+                
+            </a>
+            <span class="sidebar-profile-name">Mo Lin</span>
+        </div>
+    
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/ "
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                    <span class="sidebar-button-desc">首页</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-categories"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                    <span class="sidebar-button-desc">文章分类</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-tags"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                    <span class="sidebar-button-desc">文章标签</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/all-archives"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                    <span class="sidebar-button-desc">文章存档</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link st-search-show-outputs"
+                         href="/#search"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-search"></i>
+                    <span class="sidebar-button-desc">搜索</span>
+                </a>
+        </li>
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/#about"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                    <span class="sidebar-button-desc">关于</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link " href="https://github.com/apkcoder" target="_blank">
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                    <span class="sidebar-button-desc">GitHub</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+        <ul class="sidebar-buttons">
+        
+            <li class="sidebar-button">
+                
+                    <a  class="sidebar-button-link "
+                         href="/atom.xml"
+                        
+                    >
+                
+                    <i class="sidebar-button-icon fa fa-lg fa-rss"></i>
+                    <span class="sidebar-button-desc">RSS</span>
+                </a>
+        </li>
+        
+    </ul>
+    
+</nav>
+
+            
+            <div id="main" data-behavior="3"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            (no title)
+        </h1>
+    
+    <div class="post-meta">
+    <time itemprop="datePublished" content="Sun Aug 14 2016 01:15:07 GMT+0800">
+	
+		    8月 14, 2016
+    	
+    </time>
+    
+</div>
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <h1 id="Android_中_WebView_与_JavaScript_的交互（一）,各种_JsBridge_调用效率的对比">Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比</h1><p>date: 2016-08-14 01:10:18<br>categories: WebView<br>tags: JsBridge WebView<br>thumbnailImage: <a href="http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&amp;fm=21&amp;gp=0.jpg" target="_blank" rel="external">http://img5.imgtn.bdimg.com/it/u=2378267618,2367190753&amp;fm=21&amp;gp=0.jpg</a><br>humbnailImagePosition: bottom</p>
+<p>以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。</p>
+<p>现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下性能测试来选出最优方案。</p>
+<p><strong>参测机型与系统版本：</strong></p>
+<ol>
+<li>Moto Nexus6 OS:6.0.1</li>
+<li>魅族3S  OS:5.1.1</li>
+<li>红米1 OS:4.2.2</li>
+</ol>
+<p><strong>测试用例：</strong><br>在 web 页面上发起请求时记下当前的时间t,并通过 JsBridge伪协议将时间 t 传递给 Native端，Native端收到请求时记录下当前系统时间t2。将t2-t所得的时候就是这次 web 端和 Native端通信的耗时。同样操作执行20次，通过平均时间来比较性能。</p>
+<p><strong>测试函数</strong></p>
+<ol>
+<li>ShouldOverrideUrlLoading<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></li>
+</ol>
+<p>Native端通过重载ShouldOverrideUrlLoading方法进行拦截主资源请求，解析 JsBridge伪协议来获得相关数据。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
+<ol>
+<li><p>ShouldInterceptRequest</p>
+<p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldInterceptRequest.png" alt="此处输入图片的描述"></p>
+</li>
+</ol>
+<p>Native端通过重载ShouldInterceptRequest方法进行拦截子资源请求，解析 JsBridge伪协议来获得相关数据。</p>
+<p>Android 5.0以下系统版本提供的拦截方法：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest.png" alt="此处输入图片的描述"></p>
+<p>Android 5.0及以上系统版本提供的拦截方法可以获得更为丰富的页面信息。在WebResourceRequest有如下方法：getUrl()，isForMainFrame(),hasGesture(),getMethod(),getRequestHeaders()；其中getRequestHeaders()方法可以获得的请求信息最多了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest_lollipop.png" alt="此处输入图片的描述"></p>
+<ol>
+<li>Prompt方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_prompt.png" alt="此处输入图片的描述"></li>
+</ol>
+<p>Native端重写WebChromeClient的onJsPrompt方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsPrompt.png" alt="此处输入图片的描述"></p>
+<ol>
+<li>Alert方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_alert.png" alt="此处输入图片的描述"></li>
+</ol>
+<p>Native端重写WebChromeClient的onJsAlert方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsAlert.png" alt="此处输入图片的描述"></p>
+<ol>
+<li>Confirm方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_confirm.png" alt="此处输入图片的描述"></li>
+</ol>
+<p>Native端重写WebChromeClient的onJsConfirm方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsConfirm.png" alt="此处输入图片的描述"></p>
+<ol>
+<li>Console方式<br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png" alt="此处输入图片的描述"></li>
+</ol>
+<p>Native端重写WebChromeClient的onConsoleMessage方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png" alt="此处输入图片的描述"></p>
+<p><strong>测试结果</strong><br>数据如下图：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png" alt="测试结果"></p>
+<p><strong>测试结论</strong><br>对比上图数据，我们发现使用Confirm方式基本上是耗时最短和最稳定的。如果你不需要更详细的 web 端的信息，使用Confirm方式是性能最好的。但是如果你需要读取 web 端的请求头信息，以及是否是主 frame 发起的请求，你就必须使用子资源拦截方式（intercept方式）了。这些丰富的请求信息对以后权限控制拓展是必须的。</p>
+<p><strong>下集预告</strong><br>下一篇会写基于Confirm方式以及intercept方式的完整的 JS 交互，即包含了 Native调用 web 端的方法。</p>
+
+            
+                
+
+            
+        </div>
+    </div>
+    <div class="post-footer main-content-wrap">
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/04/11/设计模式之单例模式的5种实现方式/" data-tooltip="设计模式之单例模式的5种实现方式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+       
+  <section id="comments">
+    <!-- 多说评论框 start -->
+    <div class="ds-thread" data-thread-key="post-Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比" data-title="" data-url="http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/"></div>
+    <!-- 多说评论框 end -->
+    <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+    <script type="text/javascript">
+    var duoshuoQuery = {short_name:'motalks'};
+      (function() {
+        var ds = document.createElement('script');
+        ds.type = 'text/javascript';ds.async = true;
+        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+        ds.charset = 'UTF-8';
+        (document.getElementsByTagName('head')[0] 
+         || document.getElementsByTagName('body')[0]).appendChild(ds);
+      })();
+      </script>
+    <!-- 多说公共JS代码 end -->
+  </section>
+  
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2016 Mo Lin. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="3">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--disabled">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">前一页</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2016/04/11/设计模式之单例模式的5种实现方式/" data-tooltip="设计模式之单例模式的5种实现方式">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">后一页</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-google-plus"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-facebook-official"></i>
+            </a>
+        </li>
+        <li class="post-action hide-xs">
+            <a class="post-action-btn btn btn--default" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-twitter"></i>
+            </a>
+        </li>
+        
+            <li class="post-action">
+                <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                    <i class="fa fa-comment-o"></i>
+                </a>
+            </li>
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="3">
+    <ul class="share-options">
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://plus.google.com/share?url=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-google-plus"></i><span class="">Share on Google Plus</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://www.facebook.com/sharer/sharer.php?u=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-facebook-official"></i><span>Share on Facebook</span>
+            </a>
+        </li>
+        <li class="share-option">
+            <a class="share-option-btn" target="new" href="https://twitter.com/intent/tweet?text=http://motalks.cn/2016/08/14/Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比/">
+                <i class="fa fa-twitter"></i><span>Share on Twitter</span>
+            </a>
+        </li>
+    </ul>
+</div>
+<div id="share-options-mask" class="share-options-mask"></div>
+            
+        </div>
+        <div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="http://www.gravatar.com/avatar/c224b0b2e3593cb14922c6ec910b7be4?s=110"/>
+        
+            <h4 id="about-card-name">Mo Lin</h4>
+        
+            <h5 id="about-card-bio"><p>林墨</p>
+</h5>
+        
+        
+            <h5 id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>程序猿</p>
+
+            </h5>
+        
+        
+            <h5 id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                BeiJing
+            </h5>
+        
+    </div>
+</div>
+
+        <div id="cover" style="background-image:url('http://res.cloudinary.com/tranquilpeak-hexo-theme/image/upload/v1438975482/v1.3.0-cover.jpg');"></div>
+    </body>
+    <!--SCRIPTS-->
+<script src="/assets/js/script.min.js" type="text/javascript"></script>
+<!--SCRIPTS END-->
+
+
+
+</html>
