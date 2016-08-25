@@ -84,14 +84,14 @@
 
 
 
-<meta name="description" content="以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
-现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下">
+<meta name="description" content="各种 JsBridge 调用效率的对比以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
+现在大家常用的Web页面和Native端通信的方">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比">
 <meta property="og:url" content="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/index.html">
 <meta property="og:site_name" content="MoTalks-默说">
-<meta property="og:description" content="以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
-现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下">
+<meta property="og:description" content="各种 JsBridge 调用效率的对比以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
+现在大家常用的Web页面和Native端通信的方">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_ShouldOverrideUrlLoading.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldInterceptRequest.png">
@@ -106,11 +106,11 @@
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png">
-<meta property="og:updated_time" content="2016-08-13T17:47:24.000Z">
+<meta property="og:updated_time" content="2016-08-25T15:38:57.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比">
-<meta name="twitter:description" content="以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
-现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下">
+<meta name="twitter:description" content="各种 JsBridge 调用效率的对比以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
+现在大家常用的Web页面和Native端通信的方">
 
 
 
@@ -358,39 +358,36 @@
       
 
       
-        <p>以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。</p>
+        <h3 id="各种_JsBridge_调用效率的对比">各种 JsBridge 调用效率的对比</h3><p>以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。</p>
 <p>现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下性能测试来选出最优方案。</p>
-<p><strong>参测机型与系统版本：</strong></p>
-<ol>
+<h3 id="参测机型与系统版本："><strong>参测机型与系统版本：</strong></h3><ol>
 <li>Moto Nexus6 OS:6.0.1</li>
 <li>魅族3S  OS:5.1.1</li>
 <li>红米1 OS:4.2.2</li>
 </ol>
-<p><strong>测试用例：</strong><br>在 web 页面上发起请求时记下当前的时间t,并通过 JsBridge伪协议将时间 t 传递给 Native端，Native端收到请求时记录下当前系统时间t2。将t2-t所得的时候就是这次 web 端和 Native端通信的耗时。同样操作执行20次，通过平均时间来比较性能。</p>
-<p><strong>测试函数</strong></p>
-<p><strong>1.ShouldOverrideUrlLoading</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
+<h3 id="测试用例："><strong>测试用例：</strong></h3><p>在 web 页面上发起请求时记下当前的时间t,并通过 JsBridge伪协议将时间 t 传递给 Native端，Native端收到请求时记录下当前系统时间t2。将t2-t所得的时候就是这次 web 端和 Native端通信的耗时。同样操作执行20次，通过平均时间来比较性能。</p>
+<h3 id="测试函数"><strong>测试函数</strong></h3><h4 id="1-ShouldOverrideUrlLoading"><strong>1.ShouldOverrideUrlLoading</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
 <p>Native端通过重载ShouldOverrideUrlLoading方法进行拦截主资源请求，解析 JsBridge伪协议来获得相关数据。</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
-<p><strong>2.ShouldInterceptRequest</strong></p>
-<p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldInterceptRequest.png" alt="此处输入图片的描述"></p>
+<h4 id="2-ShouldInterceptRequest"><strong>2.ShouldInterceptRequest</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldInterceptRequest.png" alt="此处输入图片的描述"></p>
 <p>Native端通过重载ShouldInterceptRequest方法进行拦截子资源请求，解析 JsBridge伪协议来获得相关数据。</p>
 <p>Android 5.0以下系统版本提供的拦截方法：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest.png" alt="此处输入图片的描述"></p>
 <p>Android 5.0及以上系统版本提供的拦截方法可以获得更为丰富的页面信息。在WebResourceRequest有如下方法：getUrl()，isForMainFrame(),hasGesture(),getMethod(),getRequestHeaders()；其中getRequestHeaders()方法可以获得的请求信息最多了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest_lollipop.png" alt="此处输入图片的描述"></p>
-<p><strong>3.Prompt方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_prompt.png" alt="此处输入图片的描述"></p>
+<h4 id="3-Prompt方式"><strong>3.Prompt方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_prompt.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onJsPrompt方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsPrompt.png" alt="此处输入图片的描述"></p>
-<p><strong>4.Alert方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_alert.png" alt="此处输入图片的描述"></p>
+<h4 id="4-Alert方式"><strong>4.Alert方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_alert.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onJsAlert方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsAlert.png" alt="此处输入图片的描述"></p>
-<p><strong>5.Confirm方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_confirm.png" alt="此处输入图片的描述"></p>
+<h4 id="5-Confirm方式"><strong>5.Confirm方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_confirm.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onJsConfirm方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsConfirm.png" alt="此处输入图片的描述"></p>
-<p><strong>6.Console方式</strong><br>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png" alt="此处输入图片的描述"></p>
+<h4 id="6-Console方式"><strong>6.Console方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png" alt="此处输入图片的描述"></p>
 <p>Native端重写WebChromeClient的onConsoleMessage方法拉处理伪协议请求：</p>
 <p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png" alt="此处输入图片的描述"></p>
-<p><strong>测试结果</strong><br>数据如下图：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png" alt="测试结果"></p>
-<p><strong>测试结论</strong><br>对比上图数据，我们发现使用Confirm方式基本上是耗时最短和最稳定的。如果你不需要更详细的 web 端的信息，使用Confirm方式是性能最好的。但是如果你需要读取 web 端的请求头信息，以及是否是主 frame 发起的请求，你就必须使用子资源拦截方式（intercept方式）了。这些丰富的请求信息对以后权限控制拓展是必须的。</p>
+<h3 id="测试结果"><strong>测试结果</strong></h3><p>数据如下图：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png" alt="测试结果"></p>
+<h3 id="测试结论"><strong>测试结论</strong></h3><p>对比上图数据，我们发现使用Confirm方式基本上是耗时最短和最稳定的。如果你不需要更详细的 web 端的信息，使用Confirm方式是性能最好的。但是如果你需要读取 web 端的请求头信息，以及是否是主 frame 发起的请求，你就必须使用子资源拦截方式（intercept方式）了。这些丰富的请求信息对以后权限控制拓展是必须的。</p>
 <p><strong>下集预告</strong><br>下一篇会写基于Confirm方式以及intercept方式的完整的 JS 交互，即包含了 Native调用 web 端的方法。</p>
 
       
@@ -551,7 +548,7 @@
               
             
             
-              <p class="post-toc-empty">此文章未包含目录</p>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#各种_JsBridge_调用效率的对比"><span class="nav-number">1.</span> <span class="nav-text">各种 JsBridge 调用效率的对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参测机型与系统版本："><span class="nav-number">2.</span> <span class="nav-text">参测机型与系统版本：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试用例："><span class="nav-number">3.</span> <span class="nav-text">测试用例：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试函数"><span class="nav-number">4.</span> <span class="nav-text">测试函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-ShouldOverrideUrlLoading"><span class="nav-number">4.1.</span> <span class="nav-text">1.ShouldOverrideUrlLoading</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-ShouldInterceptRequest"><span class="nav-number">4.2.</span> <span class="nav-text">2.ShouldInterceptRequest</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Prompt方式"><span class="nav-number">4.3.</span> <span class="nav-text">3.Prompt方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-Alert方式"><span class="nav-number">4.4.</span> <span class="nav-text">4.Alert方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-Confirm方式"><span class="nav-number">4.5.</span> <span class="nav-text">5.Confirm方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-Console方式"><span class="nav-number">4.6.</span> <span class="nav-text">6.Console方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试结果"><span class="nav-number">5.</span> <span class="nav-text">测试结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#测试结论"><span class="nav-number">6.</span> <span class="nav-text">测试结论</span></a></li></ol></div>
             
           </div>
         </section>

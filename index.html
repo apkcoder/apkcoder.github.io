@@ -485,12 +485,10 @@
       
         
           
-          以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
+          各种 JsBridge 调用效率的对比以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
 现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下性能测试来选出最优方案。
 参测机型与系统版本：
-
-Moto Nexus6 OS:6.0.1
-魅族3S
+Moto Ne
           ...
 
           <div class="post-more-link text-center">
