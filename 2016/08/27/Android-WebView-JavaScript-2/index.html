@@ -1,0 +1,1024 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="WebView JavaScript," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="在上篇 各种 JsBridge 调用效率的对比 中已经总结出我们应该用什么方式进行WebView 与 JavaScript 的交互了，这篇我们就正式的进入主题，一步步实现完整的 WebView 与 JavaScript 的交互。
+怎么生成我们需要的 HTML 页面？当我们get了WebView 和 JavaScript交互的技能时，准备跃跃欲试的时候，就会对这个被这个问题搞懵逼了，他娘的我又不是前">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 中 WebView 与 JavaScript 的交互（二）">
+<meta property="og:url" content="http://motalks.cn/2016/08/27/Android-WebView-JavaScript-2/index.html">
+<meta property="og:site_name" content="MoTalks-默说">
+<meta property="og:description" content="在上篇 各种 JsBridge 调用效率的对比 中已经总结出我们应该用什么方式进行WebView 与 JavaScript 的交互了，这篇我们就正式的进入主题，一步步实现完整的 WebView 与 JavaScript 的交互。
+怎么生成我们需要的 HTML 页面？当我们get了WebView 和 JavaScript交互的技能时，准备跃跃欲试的时候，就会对这个被这个问题搞懵逼了，他娘的我又不是前">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/jsDemo_html.png">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/jsDemo.gif">
+<meta property="og:updated_time" content="2016-08-27T15:44:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 中 WebView 与 JavaScript 的交互（二）">
+<meta name="twitter:description" content="在上篇 各种 JsBridge 调用效率的对比 中已经总结出我们应该用什么方式进行WebView 与 JavaScript 的交互了，这篇我们就正式的进入主题，一步步实现完整的 WebView 与 JavaScript 的交互。
+怎么生成我们需要的 HTML 页面？当我们get了WebView 和 JavaScript交互的技能时，准备跃跃欲试的时候，就会对这个被这个问题搞懵逼了，他娘的我又不是前">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://motalks.cn/2016/08/27/Android-WebView-JavaScript-2/"/>
+
+  <title> Android 中 WebView 与 JavaScript 的交互（二） | MoTalks-默说 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MoTalks-默说</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">慢慢来，比较快。</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/all-categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/all-archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/all-tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android 中 WebView 与 JavaScript 的交互（二）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-27T23:18:18+08:00" content="2016-08-27">
+              2016-08-27
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android学习/" itemprop="url" rel="index">
+                    <span itemprop="name">Android学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/27/Android-WebView-JavaScript-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/27/Android-WebView-JavaScript-2/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/08/27/Android-WebView-JavaScript-2/" class="leancloud_visitors" data-flag-title="Android 中 WebView 与 JavaScript 的交互（二）">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在上篇 <a href="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">各种 JsBridge 调用效率的对比</a> 中已经总结出我们应该用什么方式进行WebView 与 JavaScript 的交互了，这篇我们就正式的进入主题，一步步实现完整的 WebView 与 JavaScript 的交互。</p>
+<h3 id="怎么生成我们需要的_HTML_页面？"><strong>怎么生成我们需要的 HTML 页面？</strong></h3><p>当我们get了WebView 和 JavaScript交互的技能时，准备跃跃欲试的时候，就会对这个被这个问题搞懵逼了，他娘的我又不是前端，要我立马写个自己想要的HTML页面臣妾真的办不到啊。</p>
+<h4 id="w3school_是什么？"><strong><a href="http://www.w3school.com.cn/b.asp" target="_blank" rel="external">w3school</a> 是什么？</strong></h4><p>是什么？你咋不点进去看看呢？</p>
+<h4 id="**我们需要的_HTML_页面">**我们需要的 HTML 页面</h4><p>按照w3school的简单教程我们就可以拼凑出我们所需要的页面了，如下图。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/jsDemo_html.png" alt="我们需要的 HTML 页面"></p>
+<h3 id="我们要实现的5个功能">我们要实现的5个功能</h3><ul>
+<li>Android Native 端调用 HTML 中的 javascript 脚本</li>
+<li>Android Native 端调用 HTML 中的 javascript 脚本并传递参数</li>
+<li>HTML 中的 javascript 脚本调用 Android Native 端的函数</li>
+<li>HTML 中的 javascript 脚本调用Android Native 端的函数并传递参数</li>
+<li>HTML 中的 javascript 脚本与 Android Native端的 Java 代码完整交互流程</li>
+</ul>
+<h4 id="Android_Native_端调用_HTML_中的_js_脚本">Android Native 端调用 HTML 中的 js 脚本</h4><p>该例子中Android Native 端的 java 代码会直接调用 HTML 页面中的js 脚本，实现更改 HTML 页面 subtitle 的功能。<br>Android Native 端的代码为：</p>
+<pre><code>mC<span class="literal">all</span>JsBtn.<span class="built_in">set</span>OnClickListener(new View.OnClickListener() {
+       @Override
+       public void <span class="keyword">on</span>Click(View v) {
+           mC<span class="literal">all</span>JsWithArgsBtn.<span class="built_in">set</span>Text(<span class="string">"Native调用WebView的有参JS脚本"</span>);
+           mWebView.<span class="built_in">load</span>Url(<span class="string">"javascript:changeDemoSubtitle()"</span>);
+       }
+   });
+</code></pre><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">changeDemoSubtitle</span>(<span class="params"></span>)</span>{
+<span class="built_in">document</span>.getElementById(<span class="string">"subtitle"</span>).innerHTML=<span class="string">"我加了点料"</span>;
+</code></pre><p>}</p>
+<h4 id="Android_Native_端调用_HTML_中的_js_脚本并传递参数">Android Native 端调用 HTML 中的 js 脚本并传递参数</h4><p>Android Native 端的代码为：</p>
+<pre><code>mCallJsWithArgsBtn.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() {
+        <span class="annotation">@Override</span>
+        <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+            mCallJsWithArgsBtn.setText(<span class="string">"参数为："</span> + showDevInfo());
+            showDevInfoToH5();
+        }
+    });
+    <span class="keyword">private</span> <span class="function">String <span class="title">showDevInfo</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> <span class="string">"showDevInfo('手机型号:"</span> + android.os.Build.MODEL +
+            <span class="string">",SDK版本:"</span> + android.os.Build.VERSION.SDK +
+            <span class="string">",系统版本:"</span> + android.os.Build.VERSION.RELEASE + <span class="string">"')"</span>;
+}
+
+<span class="keyword">private</span> <span class="function"><span class="keyword">void</span> <span class="title">showDevInfoToH5</span><span class="params">()</span> </span>{
+    mWebView.loadUrl(<span class="string">"javascript:"</span> + showDevInfo());
+}
+</code></pre><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">showDevInfo</span>(<span class="params">info</span>)</span>{
+<span class="built_in">document</span>.getElementById(<span class="string">"subtitle"</span>).innerHTML=info;
+</code></pre><p>}</p>
+<h4 id="HTML_中的_javascript_脚本调用_Android_Native_端的函数">HTML 中的 javascript 脚本调用 Android Native 端的函数</h4><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">disp_confirm</span><span class="params">()</span></span>{
+    confirm();
+}
+</code></pre><p>Android Native 端的代码为：</p>
+<pre><code>mWebView.setWebChromeClient(new <span class="type">WebChromeClient</span>() {
+        @<span class="type">Override</span>
+        public boolean onJsConfirm(<span class="type">WebView</span> view, <span class="type">String</span> url, <span class="type">String</span> message, <span class="type">JsResult</span> <span class="literal">result</span>) {
+            <span class="type">Toast</span>.makeText(<span class="type">MainActivity2</span>.this, <span class="string">"Android_Native_Toast!"</span>, <span class="type">Toast</span>.<span class="type">LENGTH_SHORT</span>).show();
+            }
+            <span class="literal">result</span>.confirm();
+            <span class="keyword">return</span> <span class="literal">true</span>;
+        }
+    });
+</code></pre><h4 id="HTML_中的_javascript_脚本调用Android_Native_端的函数并传递参数">HTML 中的 javascript 脚本调用Android Native 端的函数并传递参数</h4><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">disp_confirm_with_args</span><span class="params">(message)</span></span>{
+    confirm(message);
+    }
+</code></pre><p>Android Native 端的代码为：</p>
+<pre><code>mWebView.setWebChromeClient(new <span class="type">WebChromeClient</span>() {
+        @<span class="type">Override</span>
+        public boolean onJsConfirm(<span class="type">WebView</span> view, <span class="type">String</span> url, <span class="type">String</span> message, <span class="type">JsResult</span> <span class="literal">result</span>) {
+            <span class="type">Toast</span>.makeText(<span class="type">MainActivity2</span>.this, <span class="string">"Android_Native_Toast!接收到的参数message："</span> + message, <span class="type">Toast</span>.<span class="type">LENGTH_SHORT</span>).show();
+            }
+            <span class="literal">result</span>.confirm();
+            <span class="keyword">return</span> <span class="literal">true</span>;
+        }
+    });
+</code></pre><h4 id="HTML_中的_javascript_脚本与_Android_Native端的_Java_代码完整交互流程">HTML 中的 javascript 脚本与 Android Native端的 Java 代码完整交互流程</h4><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">disp_confirm_with_args</span><span class="params">(message)</span>{</span>
+    <span class="built_in">confirm</span>(message);
+    }
+    &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">"button"</span> onclick=<span class="string">"disp_confirm_with_args('getDevInfo')"</span> value=<span class="string">"点击获取用户手机信息"</span>/&gt;
+</code></pre><p>Android Native 端的代码为：</p>
+<pre><code>mWebView.setWebChromeClient(new <span class="type">WebChromeClient</span>() {
+        @<span class="type">Override</span>
+        public boolean onJsConfirm(<span class="type">WebView</span> view, <span class="type">String</span> url, <span class="type">String</span> message, <span class="type">JsResult</span> <span class="literal">result</span>) {
+            <span class="keyword">if</span> (<span class="string">"getDevInfo"</span>.equals(message)) {
+                showDevInfoToH5();
+            } 
+            }
+            <span class="literal">result</span>.confirm();
+            <span class="keyword">return</span> <span class="literal">true</span>;
+        }
+    });
+    private <span class="type">String</span> showDevInfo() {
+    <span class="keyword">return</span> <span class="string">"showDevInfo('手机型号:"</span> + android.os.<span class="type">Build</span>.<span class="type">MODEL</span> +
+            <span class="string">",SDK版本:"</span> + android.os.<span class="type">Build</span>.<span class="type">VERSION</span>.<span class="type">SDK</span> +
+            <span class="string">",系统版本:"</span> + android.os.<span class="type">Build</span>.<span class="type">VERSION</span>.<span class="type">RELEASE</span> + <span class="string">"')"</span>;
+}
+
+private <span class="type">void</span> showDevInfoToH5() {
+    mWebView.loadUrl(<span class="string">"javascript:"</span> + showDevInfo());
+}
+</code></pre><h4 id="Android_Native_端代码完整展示：">Android Native 端代码完整展示：</h4><p><strong>Activity 代码：</strong></p>
+<pre><code><span class="keyword">package</span> cn.mtalks.jsbridgedemo;
+<span class="keyword">import</span> android.app.Activity;
+<span class="keyword">import</span> android.os.Bundle;
+<span class="keyword">import</span> android.text.TextUtils;
+<span class="keyword">import</span> android.view.View;
+<span class="keyword">import</span> android.webkit.JsResult;
+<span class="keyword">import</span> android.webkit.WebChromeClient;
+<span class="keyword">import</span> android.webkit.WebView;
+<span class="keyword">import</span> android.widget.Button;
+<span class="keyword">import</span> android.widget.Toast;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity2</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>{
+
+<span class="keyword">private</span> WebView mWebView;
+<span class="keyword">private</span> Button mCallJsBtn;
+<span class="keyword">private</span> Button mCallJsWithArgsBtn;
+
+<span class="annotation">@Override</span>
+<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>{
+    <span class="keyword">super</span>.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main_2);
+    initView();
+    initWebView();
+}
+
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initView</span><span class="params">()</span> </span>{
+    mWebView = (WebView) findViewById(R.id.webview);
+    mCallJsBtn = (Button) findViewById(R.id.call_js_without_args_btn);
+    mCallJsWithArgsBtn = (Button) findViewById(R.id.call_js_with_args_btn);
+
+    mCallJsBtn.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() {
+        <span class="annotation">@Override</span>
+        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+            mCallJsWithArgsBtn.setText(<span class="string">"Native调用WebView的有参JS脚本"</span>);
+            mWebView.loadUrl(<span class="string">"javascript:changeDemoSubtitle()"</span>);
+        }
+    });
+
+    mCallJsWithArgsBtn.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() {
+        <span class="annotation">@Override</span>
+        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+            mCallJsWithArgsBtn.setText(<span class="string">"参数为："</span> + showDevInfo());
+            showDevInfoToH5();
+        }
+    });
+}
+
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initWebView</span><span class="params">()</span> </span>{
+    <span class="comment">//开启JavaScript功能</span>
+    mWebView.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);
+    <span class="comment">//加载本地html</span>
+    mWebView.loadUrl(<span class="string">"file:///android_asset/JsDemo.html"</span>);
+
+    mWebView.setWebChromeClient(<span class="keyword">new</span> WebChromeClient() {
+        <span class="annotation">@Override</span>
+        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onJsConfirm</span><span class="params">(WebView view, String url, String message, JsResult result)</span> </span>{
+            <span class="keyword">if</span> (<span class="string">"getDevInfo"</span>.equals(message)) {
+                showDevInfoToH5();
+            } <span class="keyword">else</span> <span class="keyword">if</span> (TextUtils.isEmpty(message)) {
+                Toast.makeText(MainActivity2.<span class="keyword">this</span>, <span class="string">"Android_Native_Toast!"</span>, Toast.LENGTH_SHORT).show();
+            } <span class="keyword">else</span> {
+                Toast.makeText(MainActivity2.<span class="keyword">this</span>, <span class="string">"Android_Native_Toast!接收到的参数message："</span> + message, Toast.LENGTH_SHORT).show();
+            }
+            <span class="comment">//回调通知H5页面用户操作已完成，可以再次点击相关按钮</span>
+            result.confirm();
+            <span class="comment">//设为true，可以消耗掉H5页面的confirm弹窗。</span>
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+    });
+}
+
+<span class="function"><span class="keyword">private</span> String <span class="title">showDevInfo</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> <span class="string">"showDevInfo('手机型号:"</span> + android.os.Build.MODEL +
+            <span class="string">",SDK版本:"</span> + android.os.Build.VERSION.SDK +
+            <span class="string">",系统版本:"</span> + android.os.Build.VERSION.RELEASE + <span class="string">"')"</span>;
+}
+
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">showDevInfoToH5</span><span class="params">()</span> </span>{
+        mWebView.loadUrl(<span class="string">"javascript:"</span> + showDevInfo());
+    }
+}
+</code></pre><p><strong>XML 代码</strong></p>
+<pre><code><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="tag">&lt;<span class="title">LinearLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:orientation</span>=<span class="value">"vertical"</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">LinearLayout</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+    <span class="attribute">android:background</span>=<span class="value">"#000000"</span>
+    <span class="attribute">android:orientation</span>=<span class="value">"vertical"</span>&gt;</span>
+
+    <span class="tag">&lt;<span class="title">TextView</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_marginBottom</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingBottom</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingTop</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:text</span>=<span class="value">"Android_Native"</span>
+        <span class="attribute">android:textColor</span>=<span class="value">"#FFFFFF"</span> /&gt;</span>
+
+    <span class="tag">&lt;<span class="title">Button</span>
+        <span class="attribute">android:id</span>=<span class="value">"@+id/call_js_without_args_btn"</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_margin</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:text</span>=<span class="value">"Native调用WebView的JS脚本"</span> /&gt;</span>
+
+    <span class="tag">&lt;<span class="title">Button</span>
+        <span class="attribute">android:id</span>=<span class="value">"@+id/call_js_with_args_btn"</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_margin</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingBottom</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingTop</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:text</span>=<span class="value">"Native调用WebView的有参JS脚本"</span> /&gt;</span>
+<span class="tag">&lt;/<span class="title">LinearLayout</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">WebView</span>
+    <span class="attribute">android:id</span>=<span class="value">"@+id/webview"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:background</span>=<span class="value">"#FFFFFF"</span>
+    /&gt;</span>
+<span class="tag">&lt;/<span class="title">LinearLayout</span>&gt;</span>
+</code></pre><p><strong>AndroidManifest 文件</strong></p>
+<pre><code><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="tag">&lt;<span class="title">manifest</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">package</span>=<span class="value">"cn.mtalks.jsbridgedemo"</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.INTERNET"</span> /&gt;</span>
+    <span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.READ_PHONE_STATE"</span> /&gt;</span>
+    <span class="tag">&lt;<span class="title">application</span>
+        <span class="attribute">android:allowBackup</span>=<span class="value">"true"</span>
+        <span class="attribute">android:icon</span>=<span class="value">"@mipmap/ic_launcher"</span>
+        <span class="attribute">android:label</span>=<span class="value">"@string/app_name"</span>
+        <span class="attribute">android:supportsRtl</span>=<span class="value">"true"</span>
+        <span class="attribute">android:theme</span>=<span class="value">"@style/AppTheme"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">activity</span>
+            <span class="attribute">android:name</span>=<span class="value">".MainActivity2"</span>
+            <span class="attribute">android:label</span>=<span class="value">"@string/app_name"</span>&gt;</span>
+            <span class="tag">&lt;<span class="title">intent-filter</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">action</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.action.MAIN"</span> /&gt;</span>
+                <span class="tag">&lt;<span class="title">category</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.category.LAUNCHER"</span> /&gt;</span>
+            <span class="tag">&lt;/<span class="title">intent-filter</span>&gt;</span>
+
+        <span class="tag">&lt;/<span class="title">activity</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">application</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">manifest</span>&gt;</span>
+</code></pre><h3 id="Demo动图演示">Demo动图演示</h3><p>演示功能点的顺序是：5-1-2-3-4</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/jsDemo.gif" alt="此处输入图片的描述"></p>
+<h3 id="友情提示">友情提示</h3><p>其实在JavaScript调用 Java本地方法，谷歌官方的实现方法应该是使用 JavascriptInterface 方式。但是该方式在 Android4.2版本之前存在安全漏洞，感兴趣的<a href="http://blog.csdn.net/leehong2005/article/details/11808557" target="_blank" rel="external">看这里</a>。在Android4.2版本之后加入了@JavascriptInterface注解才得以解决，考虑到目前 Android 版本碎片化太严重，使用JavascriptInterface并不适合，这也是上篇文章没把它放入效率对比的原因。</p>
+<p>以上就是一个完整的 WebView 与 JavaScript 的交互例子。大家可以自己动手试试上篇文章介绍的ShouldInterceptRequest方式来实现这个例子。</p>
+<h3 id="下篇预告">下篇预告</h3><p>Webview 页面展示优化。除了 HTML 页面自己的优化，在 Android Native 端能为加载速度做些什么优化么？下篇文章会给你答案，比如公共 Js 方法提取放入本地，JS,CSS,图片资源预加载等等。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/WebView-JavaScript/" rel="tag">#WebView JavaScript</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/22/拆书系列：《拖延心理学》 Part1：行为/" rel="next" title="拆书系列：《拖延心理学》 Part1：行为">
+                <i class="fa fa-chevron-left"></i> 拆书系列：《拖延心理学》 Part1：行为
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/27/Android-WebView-JavaScript-2/"
+           data-title="Android 中 WebView 与 JavaScript 的交互（二）" data-url="http://motalks.cn/2016/08/27/Android-WebView-JavaScript-2/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Mo Lin" />
+          <p class="site-author-name" itemprop="name">Mo Lin</p>
+          <p class="site-description motion-element" itemprop="description">最怕你一身碌碌无为，还说平凡难能可贵。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/all-archives">
+              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/all-categories">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/all-tags">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#怎么生成我们需要的_HTML_页面？"><span class="nav-number">1.</span> <span class="nav-text">怎么生成我们需要的 HTML 页面？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#w3school_是什么？"><span class="nav-number">1.1.</span> <span class="nav-text">w3school 是什么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#**我们需要的_HTML_页面"><span class="nav-number">1.2.</span> <span class="nav-text">**我们需要的 HTML 页面</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#我们要实现的5个功能"><span class="nav-number">2.</span> <span class="nav-text">我们要实现的5个功能</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Android_Native_端调用_HTML_中的_js_脚本"><span class="nav-number">2.1.</span> <span class="nav-text">Android Native 端调用 HTML 中的 js 脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android_Native_端调用_HTML_中的_js_脚本并传递参数"><span class="nav-number">2.2.</span> <span class="nav-text">Android Native 端调用 HTML 中的 js 脚本并传递参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTML_中的_javascript_脚本调用_Android_Native_端的函数"><span class="nav-number">2.3.</span> <span class="nav-text">HTML 中的 javascript 脚本调用 Android Native 端的函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTML_中的_javascript_脚本调用Android_Native_端的函数并传递参数"><span class="nav-number">2.4.</span> <span class="nav-text">HTML 中的 javascript 脚本调用Android Native 端的函数并传递参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#HTML_中的_javascript_脚本与_Android_Native端的_Java_代码完整交互流程"><span class="nav-number">2.5.</span> <span class="nav-text">HTML 中的 javascript 脚本与 Android Native端的 Java 代码完整交互流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Android_Native_端代码完整展示："><span class="nav-number">2.6.</span> <span class="nav-text">Android Native 端代码完整展示：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Demo动图演示"><span class="nav-number">3.</span> <span class="nav-text">Demo动图演示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#友情提示"><span class="nav-number">4.</span> <span class="nav-text">友情提示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下篇预告"><span class="nav-number">5.</span> <span class="nav-text">下篇预告</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mo Lin</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"motalks"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Xe7OhcV6hpNxsoz0lF75UATJ-gzGzoHsz", "zKhsOEUhlTl0b2YN2l23zo8v");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
