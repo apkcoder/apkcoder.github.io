@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="JsBridge WebView," />
+  <meta name="keywords" content="WebView JavaScript," />
 
 
 
@@ -87,7 +87,7 @@
 <meta name="description" content="各种 JsBridge 调用效率的对比以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
 现在大家常用的Web页面和Native端通信的方">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比">
+<meta property="og:title" content="Android WebView：JavaScript 调用效率哪家强？">
 <meta property="og:url" content="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/index.html">
 <meta property="og:site_name" content="MoTalks-默说">
 <meta property="og:description" content="各种 JsBridge 调用效率的对比以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
@@ -106,9 +106,9 @@
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png">
-<meta property="og:updated_time" content="2016-08-28T06:11:35.000Z">
+<meta property="og:updated_time" content="2016-08-28T06:15:21.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比">
+<meta name="twitter:title" content="Android WebView：JavaScript 调用效率哪家强？">
 <meta name="twitter:description" content="各种 JsBridge 调用效率的对比以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。
 现在大家常用的Web页面和Native端通信的方">
 
@@ -133,7 +133,7 @@
 
   <link rel="canonical" href="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/"/>
 
-  <title> Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比 | MoTalks-默说 </title>
+  <title> Android WebView：JavaScript 调用效率哪家强？ | MoTalks-默说 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -283,7 +283,7 @@
             
             
               
-                Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比
+                Android WebView：JavaScript 调用效率哪家强？
               
             
           </h1>
@@ -309,8 +309,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/WebView/" itemprop="url" rel="index">
-                    <span itemprop="name">WebView</span>
+                  <a href="/categories/Android学习/" itemprop="url" rel="index">
+                    <span itemprop="name">Android学习</span>
                   </a>
                 </span>
 
@@ -336,7 +336,7 @@
 
           
           
-             <span id="/2016/08/14/Android-WebView-JavaScript-1/" class="leancloud_visitors" data-flag-title="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比">
+             <span id="/2016/08/14/Android-WebView-JavaScript-1/" class="leancloud_visitors" data-flag-title="Android WebView：JavaScript 调用效率哪家强？">
                &nbsp; | &nbsp;
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -411,7 +411,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/JsBridge-WebView/" rel="tag">#JsBridge WebView</a>
+            <a href="/tags/WebView-JavaScript/" rel="tag">#WebView JavaScript</a>
           
         </div>
       
@@ -457,7 +457,7 @@
   <div class="comments" id="comments">
     
       <div class="ds-thread" data-thread-key="2016/08/14/Android-WebView-JavaScript-1/"
-           data-title="Android 中 WebView 与 JavaScript 的交互（一）,各种 JsBridge 调用效率的对比" data-url="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
+           data-title="Android WebView：JavaScript 调用效率哪家强？" data-url="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">
       </div>
     
   </div>
@@ -510,7 +510,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/all-categories">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -519,7 +519,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/all-tags">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
