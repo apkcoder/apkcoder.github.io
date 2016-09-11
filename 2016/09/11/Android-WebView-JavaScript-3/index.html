@@ -1,0 +1,833 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JavaScript,WebView," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 Android 系统版本采用了不同内核的兼容问题等等。 所以当我们使用了 WebView 这个组件的时候，性能优化的事情就不能不提上议程了。这篇文章我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android WebView：性能优化不得不说的事">
+<meta property="og:url" content="http://motalks.cn/2016/09/11/Android-WebView-JavaScript-3/index.html">
+<meta property="og:site_name" content="MoTalks-默说">
+<meta property="og:description" content="Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 Android 系统版本采用了不同内核的兼容问题等等。 所以当我们使用了 WebView 这个组件的时候，性能优化的事情就不能不提上议程了。这篇文章我们">
+<meta property="og:image" content="http://mmbiz.qpic.cn/mmbiz/tnZGrhTk4delibZt2QKicny2hzbfkAftd1elIRicib9mYgASTDqqCUoibDWdicDP57evMYRwY2UGKzLu8TSC2FTa7vIw/0?wx_fmt=png">
+<meta property="og:updated_time" content="2016-09-11T10:04:09.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android WebView：性能优化不得不说的事">
+<meta name="twitter:description" content="Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 Android 系统版本采用了不同内核的兼容问题等等。 所以当我们使用了 WebView 这个组件的时候，性能优化的事情就不能不提上议程了。这篇文章我们">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://motalks.cn/2016/09/11/Android-WebView-JavaScript-3/"/>
+
+  <title> Android WebView：性能优化不得不说的事 | MoTalks-默说 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">MoTalks-默说</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">慢慢来，比较快。</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/all-categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/all-tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android WebView：性能优化不得不说的事
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-11T18:18:18+08:00" content="2016-09-11">
+              2016-09-11
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Android学习/" itemprop="url" rel="index">
+                    <span itemprop="name">Android学习</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/11/Android-WebView-JavaScript-3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/11/Android-WebView-JavaScript-3/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/09/11/Android-WebView-JavaScript-3/" class="leancloud_visitors" data-flag-title="Android WebView：性能优化不得不说的事">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 Android 系统版本采用了不同内核的兼容问题等等。 所以当我们使用了 WebView 这个组件的时候，性能优化的事情就不能不提上议程了。这篇文章我们就针对上述问题来总结下 Android WebView 性能优化的常见方法。</p>
+</blockquote>
+<h3 id="页面加载速度优化">页面加载速度优化</h3><p>影响页面加载速度的因素有非常多，我们在对 WebView 加载一个网页的过程进行调试发现，每次加载的过程中都会有较多的网络请求，除了 web 页面自身的 URL 请求，还会有 web 页面外部引用的JS、CSS、字体、图片等等都是个独立的 http 请求。这些请求都是串行的，这些请求加上浏览器的解析、渲染时间就会导致 WebView 整体加载时间变长，消耗的流量也对应的真多。接下来我们就来说说几种优化方案来是怎么解决这个问题的。</p>
+<h4 id="选择合适的_WebView_缓存">选择合适的 WebView 缓存</h4><p>WebView  缓存看似就是开启几个开关的问题，但是要弄懂这几种缓存机制还是很有深度。下图是腾讯某工程师总结六种 H5 常用的缓存机制的优势及适用场景。</p>
+<p><img src="http://mmbiz.qpic.cn/mmbiz/tnZGrhTk4delibZt2QKicny2hzbfkAftd1elIRicib9mYgASTDqqCUoibDWdicDP57evMYRwY2UGKzLu8TSC2FTa7vIw/0?wx_fmt=png" alt="图片来自Bugly"></p>
+<h5 id="浏览器缓存机制：">浏览器缓存机制：</h5><p>主要前端负责，Android 端不需要进行特别的配置。</p>
+<h5 id="Dom_Storage（Web_Storage）存储机制：">Dom Storage（Web Storage）存储机制：</h5><p>配合前端使用，使用时需要打开 DomStorage 开关。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;##### Web SQL Database &#23384;&#20648;&#26426;&#21046;&#65306;&#10;&#10;&#34429;&#28982;&#24050;&#32463;&#19981;&#25512;&#33616;&#20351;&#29992;&#20102;&#65292;&#20294;&#26159;&#20026;&#20102;&#20860;&#23481;&#24615;&#65292;&#36824;&#26159;&#25552;&#20379;&#19979; Android &#31471;&#20351;&#29992;&#30340;&#26041;&#27861; &#10;&#10;```java&#10;WebView myWebView = (WebView) findViewById(R.id.webview);&#10;WebSettings webSettings = myWebView.getSettings();&#10;webSettings.setDatabaseEnabled(true);&#10;final String dbPath = getApplicationContext().getDir(&#34;db&#34;, Context.MODE_PRIVATE).getPath();&#10;webSettings.setDatabasePath(dbPath)</span><br></pre></td></tr></table></figure>
+<h5 id="Application_Cache_存储机制">Application Cache 存储机制</h5><p>Application Cache（简称 AppCache)似乎是为支持 Web App 离线使用而开发的缓存机制。它的缓存机制类似于浏览器的缓存（Cache-Control  和 Last-Modified）机制，都是以文件为单位进行缓存，且文件有一定更新机制。但 AppCache 是对浏览器缓存机制的补充，不是替代。</p>
+<p>不过根据官方文档，AppCache 已经不推荐使用了，标准也不会再支持。现在主流的浏览器都是还支持 AppCache的，以后就不太确定了。同样给出 Android 端启用 AppCache 的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WebView myWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">WebSettings webSettings = myWebView.getSettings();</span><br><span class="line">webSettings.setAppCacheEnabled(<span class="keyword">true</span>);</span><br><span class="line"><span class="keyword">final</span> String cachePath = getApplicationContext().getDir(<span class="string">"cache"</span>,Context.MODE_PRIVATE).getPath();</span><br><span class="line">webSettings.setAppCachePath(cachePath);</span><br><span class="line">webSettings.setAppCacheMaxSize(<span class="number">5</span>*<span class="number">1024</span>*<span class="number">1024</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="Indexed_Database_存储机制">Indexed Database 存储机制</h5><p>IndexedDB 也是一种数据库的存储机制，但不同于已经不再支持的 Web SQL Database。IndexedDB 不是传统的关系数据库，可归为 NoSQL 数据库。IndexedDB 又类似于 Dom Storage 的 key-value 的存储方式，但功能更强大，且存储空间更大。</p>
+<p>Android 在4.4开始加入对 IndexedDB 的支持，只需打开允许 JS 执行的开关就好了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WebView myWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">WebSettings webSettings = myWebView.getSettings();</span><br><span class="line">webSettings.setJavaScriptEnabled(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="File_System_API">File System API</h5><p>File System API 是 H5 新加入的存储机制。它为 Web App 提供了一个虚拟的文件系统，就像 Native App 访问本地文件系统一样。由于安全性的考虑，这个虚拟文件系统有一定的限制。Web App 在虚拟的文件系统中，可以进行文件（夹）的创建、读、写、删除、遍历等操作。很可惜到目前，Android 系统的 WebView 还不支持 File System API。</p>
+<blockquote>
+<p>简单的介绍完了上面六种 H5 常用的缓存模式，想必大家能对 Android WebView 所支持的缓存模式有个粗略的了解。如果想和前端更好的配合使用 Android WebView 所支持的缓存，建议看下这篇文章<a href="http://bugly.qq.com/bbs/forum.php?mod=viewthread&amp;tid=267" target="_blank" rel="external">《H5 缓存机制浅析 移动端 Web 加载性能优化》</a></p>
+</blockquote>
+<h4 id="常用资源预加载">常用资源预加载</h4><p>上面介绍的缓存技术，能优化二次启动 WebView 的加载速度，那首次加载 H5 页面的速度该怎么优化呢？上面分析了一次加载过程会有许多外部依赖的 JS、CSS、图片等资源需要下载，那我们能不能提前将这些资源下载好，等H5 加载时直接替换呢？</p>
+<p>好在从 API 11（Android 3.0）开始，WebView 引入了 shouldInterceptRequest 函数，这个函数有两种重载。</p>
+<ul>
+<li><strong>public WebResourceResponse shouldInterceptRequest(WebView webView, String url)</strong> 从 API 11 引入，API 21 废弃</li>
+<li><strong>public WebResourceResponse shouldInterceptRequest (WebView view, WebResourceRequest request)</strong>  从 API 21 开始引入</li>
+</ul>
+<p>考虑到目前大多数 App 还要支持 API 14，所以还是使用 shouldInterceptRequest (WebView view, String url) 为例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">WebView mWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">mWebView.setWebViewClient(<span class="keyword">new</span> WebViewClient() &#123;</span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> WebResourceResponse <span class="title">shouldInterceptRequest</span><span class="params">(WebView webView, <span class="keyword">final</span> String url)</span> </span>&#123;</span><br><span class="line">                WebResourceResponse response = <span class="keyword">null</span>;</span><br><span class="line">              	<span class="comment">// 检查该资源是否已经提前下载完成。我采用的策略是在应用启动时，用户在 wifi 的网络环境下				// 提前下载 H5 页面需要的资源。</span></span><br><span class="line">                <span class="keyword">boolean</span> resDown = JSHelper.isURLDownValid(url);</span><br><span class="line">                <span class="keyword">if</span> (resDown) &#123;</span><br><span class="line">                    jsStr = JsjjJSHelper.getResInputStream(url);</span><br><span class="line">                    <span class="keyword">if</span> (url.endsWith(<span class="string">".png"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/png"</span>, <span class="string">".png"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".gif"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/gif"</span>, <span class="string">".gif"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".jpg"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/jepg"</span>, <span class="string">".jpg"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".jepg"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/jepg"</span>, <span class="string">".jepg"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".js"</span>) &amp;&amp; jsStr != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        response = getWebResourceResponse(<span class="string">"text/javascript"</span>, <span class="string">"UTF-8"</span>, <span class="string">".js"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".css"</span>) &amp;&amp; jsStr != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        response = getWebResourceResponse(<span class="string">"text/css"</span>, <span class="string">"UTF-8"</span>, <span class="string">".css"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".html"</span>) &amp;&amp; jsStr != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        response = getWebResourceResponse(<span class="string">"text/html"</span>, <span class="string">"UTF-8"</span>, <span class="string">".html"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 若 response 返回为 null , WebView 会自行请求网络加载资源。 </span></span><br><span class="line">                <span class="keyword">return</span> response;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> WebResourceResponse <span class="title">getWebResourceResponse</span><span class="params">(String url, String mime, String style)</span> </span>&#123;</span><br><span class="line">        WebResourceResponse response = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            response = <span class="keyword">new</span> WebResourceResponse(mime, <span class="string">"UTF-8"</span>, <span class="keyword">new</span> FileInputStream(<span class="keyword">new</span> File(getJSPath() + TPMD5.md5String(url) + style)));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getJsjjJSPath</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String splashTargetPath = JarEnv.sApplicationContext.getFilesDir().getPath() + <span class="string">"/JS"</span>;</span><br><span class="line">        <span class="keyword">if</span> (!TPFileSysUtil.isDirFileExist(splashTargetPath)) &#123;</span><br><span class="line">            TPFileSysUtil.createDir(splashTargetPath);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> splashTargetPath + <span class="string">"/"</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="常用_JS_本地化及延迟加载">常用 JS 本地化及延迟加载</h4><p>比预加载更粗暴的优化方法是直接将常用的 JS 脚本本地化，直接打包放入 apk 中。比如 H5 页面获取用户信息，设置标题等通用方法，就可以直接写入一个  JS 文件，放入 asserts 文件夹，在 WebView 调用了onPageFinished() 方法后进行加载。需要注意的是，在该  JS 文件中需要写入一个 JS 文件载入完毕的事件，这样前端才能接受都爱  JS 文件已经种植完毕，可以调用 JS 中的方法了。 附上一段本地化的 JS 代码。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">javascript: ;</span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="built_in">window</span>.JSBridge = &#123;</span><br><span class="line">      <span class="string">'invoke'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> args = [].slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>),</span><br><span class="line">          callback = args.pop(),</span><br><span class="line">          params, obj = <span class="keyword">this</span>[name];</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">'function'</span>) &#123;</span><br><span class="line">          params = callback;</span><br><span class="line">          callback = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          params = args[<span class="number">0</span>]</span><br><span class="line">        &#125; <span class="keyword">if</span> (<span class="keyword">typeof</span> obj !== <span class="string">'object'</span> || <span class="keyword">typeof</span> obj.func !== <span class="string">'function'</span>) &#123;</span><br><span class="line">          callback(&#123;</span><br><span class="line">            <span class="string">'err_msg'</span>: <span class="string">'system:function_not_exist'</span></span><br><span class="line">          &#125;);</span><br><span class="line">          <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        obj.callback = callback;</span><br><span class="line">        obj.params = params;</span><br><span class="line">        obj.func(params)</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">'on'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">event, callback</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> obj = <span class="keyword">this</span>[<span class="string">'on'</span> + event];</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> obj !== <span class="string">'object'</span>) &#123;</span><br><span class="line">          callback(&#123;</span><br><span class="line">            <span class="string">'err_msg'</span>: <span class="string">'system:function_not_exist'</span></span><br><span class="line">          &#125;);</span><br><span class="line">          retrun</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">'undefined'</span>) obj.callback = callback</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">'login'</span>: &#123;</span><br><span class="line">        <span class="string">'func'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">params</span>) </span>&#123;</span><br><span class="line">          prompt(<span class="string">"login"</span>, <span class="built_in">JSON</span>.stringify(params))</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'params'</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">'callback'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;&#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">'settitle'</span>: &#123;</span><br><span class="line">        <span class="string">'func'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">params</span>) </span>&#123;</span><br><span class="line">          prompt(<span class="string">"settitle"</span>,<span class="built_in">JSON</span>.stringify(params))</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'params'</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">'callback'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;&#125;</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;<span class="keyword">catch</span>(e)&#123;</span><br><span class="line">    alert(<span class="string">'demo.js error:'</span>+e);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> readyEvent = <span class="built_in">document</span>.createEvent(<span class="string">'Events'</span>);</span><br><span class="line">  readyEvent.initEvent(<span class="string">'JSBridgeReady'</span>, <span class="literal">true</span>, <span class="literal">true</span>);</span><br><span class="line">  <span class="built_in">document</span>.dispatchEvent(readyEvent)</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p><strong>关于 JS 延迟加载</strong></p>
+<blockquote>
+<p>Android 的 OnPageFinished 事件会在 Javascript 脚本执行完成之后才会触发。如果在页面中使 用JQuery，会在处理完 DOM 对象，执行完 <strong>$(document).ready(function() {});</strong> 事件自会后才会渲染并显示页面。而同样的页面在 iPhone 上却是载入相当的快，因为 iPhone 是显示完页面才会触发脚本的执行。所以我们这边的解决方案延迟 JS 脚本的载入，这个方面的问题是需要Web前端工程师帮忙优化的。</p>
+</blockquote>
+<h3 id="使用第三方_WebView_内核">使用第三方 WebView 内核</h3><p>WebView 的兼容性一直也是困扰我们 Android 开发者的一个大问题，不说 Android 4.4 版本 Google 使用了Chromium 替代 Webkit 作为 WebView 内核，就看看国内众多的第三方 ROM 都有可能会对原生的 WebView 做出修改，这时候如果出现兼容问题，是非常难定位到问题和解决的。</p>
+<p>在一次使用微信浏览订阅公众号文章的过程中，发现微信的 H5 页面有一行 『QQ 浏览器 X5 内核提供技术支持』。顺着这个线索我就找到了<a href="http://x5.tencent.com/index" target="_blank" rel="external">腾讯浏览服务</a>。发现腾讯已经把这个功能开放了，而且集成的 SDK 很小只有212 KB。这是很惊人的，通过介绍才发现这个 SDK 是可以共享微信和手机 QQ 的  X5 内核。这就很方便了，作为国内市场最不可或缺的两个 App，我们能只需要集成一个很小的 SDK 就可以共享使用 X5 内核了，不得不说腾讯还是很有想法的。</p>
+<p>简单摘录些功能亮点，想必能让大家高潮一番。详细内容大家可以直接到<a href="http://x5.tencent.com/index" target="_blank" rel="external">腾讯浏览服务</a>看看，我相信不会让你们失望的。</p>
+<blockquote>
+<p><strong>网页浏览能力</strong></p>
+<p>Web页面crash率降低75%</p>
+<p>页面打开速度提升35%</p>
+<p>流量节省60%</p>
+<p><strong>阅读模式</strong></p>
+<p>去除网页中广告等杂质</p>
+<p>优化文章的阅读体验</p>
+<p><strong>文件打开能力</strong></p>
+<p>包括会话页的互传文件及邮件中附件</p>
+<p>支持doc、ppt、xls、pdf等办公格式</p>
+<p>支持jpg、gif、png、bmp等图片格式</p>
+<p>支持zip、rar等压缩文件</p>
+<p>支持mp3、mp4、RMVB等音视频格式</p>
+<p><strong>视频菜单能力</strong></p>
+<p>支持屏幕调节等常规视频菜单功能</p>
+<p>灵活切换全屏&amp;小窗功能</p>
+</blockquote>
+<h3 id="WebView_导致的内存泄露">WebView 导致的内存泄露</h3><blockquote>
+<p>Android 中的 WebView 存在很大的兼容性问题，不仅仅是 Android 系统版本的不同对 WebView 产生很大的差异，另外不同的厂商出货的 ROM 里面 WebView 也存在着很大的差异。更严重的是标准的 WebView 存在内存泄露的问题，看这里<a href="https://code.google.com/p/android/issues/detail?id=5067" target="_blank" rel="external">WebView causes memory leak - leaks the parent Activity</a>。所以通常根治这个问题的办法是为 WebView 开启另外一个进程，通过 AIDL 与主进程进行通信，WebView 所在的进程可以根据业务的需要选择合适的时机进行销毁，从而达到内存的完整释放。</p>
+</blockquote>
+<p>这段话来自<a href="http://hukai.me/android-performance-oom/" target="_blank" rel="external">胡凯</a>翻译的 Google Android 内存优化之 OOM 。这里提到的让 WebView 独立运行在一个进程里，用完 WebView 后直接销毁这个进程，即使内存泄露了，也不会影响到主进程。微信，手 Q 等 App 也采用了这个方案。但是这就涉及到了跨进程通讯，处理起来就比较麻烦。</p>
+<p>另外个解决方案，就是使用自己封装的 WebView，比如上面提到的 X5 内核，且使用 WebView 的时候，不在 XML  里面声明，而是在代码中直接 new 出来，传入 application context 来防止 activity 引用被滥用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WebView webView =  <span class="keyword">new</span> WebView(getContext().getApplicationContext());</span><br><span class="line">webFrameLayout.addView(webView, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>在使用了这个方式后，基本上 90% 的 WebView 内存泄漏的问题便得以解决。</p>
+<p>上面两个方案，大家可以结合自己的项目情况选择。另外对 WebView 内存泄露原因感兴趣的可以看看这篇文章。</p>
+<p><a href="http://bugly.qq.com/bbs/forum.php?mod=viewthread&amp;tid=516" target="_blank" rel="external">《Android中导致内存泄漏的竟然是它—-Dialog》</a></p>
+<h4 id="参考文章">参考文章</h4><p><a href="http://bugly.qq.com/bbs/forum.php?mod=viewthread&amp;tid=267" target="_blank" rel="external">《H5 缓存机制浅析 移动端 Web 加载性能优化》</a></p>
+<p><a href="http://www.jianshu.com/p/c2412918b2b5" target="_blank" rel="external">《android内存优化之webview》</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
+          
+            <a href="/tags/WebView/" rel="tag">#WebView</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/06/拖延，是我和这个世界的一场战争/" rel="next" title="拖延，是我和这个世界的一场战争">
+                <i class="fa fa-chevron-left"></i> 拖延，是我和这个世界的一场战争
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/09/11/Android-WebView-JavaScript-3/"
+           data-title="Android WebView：性能优化不得不说的事" data-url="http://motalks.cn/2016/09/11/Android-WebView-JavaScript-3/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Mo Lin" />
+          <p class="site-author-name" itemprop="name">Mo Lin</p>
+          <p class="site-description motion-element" itemprop="description">最怕你一身碌碌无为，还说平凡难能可贵。</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/all-categories">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/all-tags">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#页面加载速度优化"><span class="nav-number">1.</span> <span class="nav-text">页面加载速度优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#选择合适的_WebView_缓存"><span class="nav-number">1.1.</span> <span class="nav-text">选择合适的 WebView 缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#浏览器缓存机制："><span class="nav-number">1.1.1.</span> <span class="nav-text">浏览器缓存机制：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Dom_Storage（Web_Storage）存储机制："><span class="nav-number">1.1.2.</span> <span class="nav-text">Dom Storage（Web Storage）存储机制：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Application_Cache_存储机制"><span class="nav-number">1.1.3.</span> <span class="nav-text">Application Cache 存储机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Indexed_Database_存储机制"><span class="nav-number">1.1.4.</span> <span class="nav-text">Indexed Database 存储机制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#File_System_API"><span class="nav-number">1.1.5.</span> <span class="nav-text">File System API</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用资源预加载"><span class="nav-number">1.2.</span> <span class="nav-text">常用资源预加载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用_JS_本地化及延迟加载"><span class="nav-number">1.3.</span> <span class="nav-text">常用 JS 本地化及延迟加载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用第三方_WebView_内核"><span class="nav-number">2.</span> <span class="nav-text">使用第三方 WebView 内核</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebView_导致的内存泄露"><span class="nav-number">3.</span> <span class="nav-text">WebView 导致的内存泄露</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#参考文章"><span class="nav-number">3.1.</span> <span class="nav-text">参考文章</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Mo Lin</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"motalks"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("Xe7OhcV6hpNxsoz0lF75UATJ-gzGzoHsz", "zKhsOEUhlTl0b2YN2l23zo8v");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>
