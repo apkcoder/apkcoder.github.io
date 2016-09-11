@@ -90,8 +90,8 @@
 <meta property="og:url" content="http://motalks.cn/2016/09/11/Android-WebView-JavaScript-3/index.html">
 <meta property="og:site_name" content="MoTalks-默说">
 <meta property="og:description" content="Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 Android 系统版本采用了不同内核的兼容问题等等。 所以当我们使用了 WebView 这个组件的时候，性能优化的事情就不能不提上议程了。这篇文章我们">
-<meta property="og:image" content="http://mmbiz.qpic.cn/mmbiz/tnZGrhTk4delibZt2QKicny2hzbfkAftd1elIRicib9mYgASTDqqCUoibDWdicDP57evMYRwY2UGKzLu8TSC2FTa7vIw/0?wx_fmt=png">
-<meta property="og:updated_time" content="2016-09-11T10:04:09.000Z">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/H5_cache.png">
+<meta property="og:updated_time" content="2016-09-11T10:35:37.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android WebView：性能优化不得不说的事">
 <meta name="twitter:description" content="Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 Android 系统版本采用了不同内核的兼容问题等等。 所以当我们使用了 WebView 这个组件的时候，性能优化的事情就不能不提上议程了。这篇文章我们">
@@ -347,7 +347,7 @@
 </blockquote>
 <h3 id="页面加载速度优化">页面加载速度优化</h3><p>影响页面加载速度的因素有非常多，我们在对 WebView 加载一个网页的过程进行调试发现，每次加载的过程中都会有较多的网络请求，除了 web 页面自身的 URL 请求，还会有 web 页面外部引用的JS、CSS、字体、图片等等都是个独立的 http 请求。这些请求都是串行的，这些请求加上浏览器的解析、渲染时间就会导致 WebView 整体加载时间变长，消耗的流量也对应的真多。接下来我们就来说说几种优化方案来是怎么解决这个问题的。</p>
 <h4 id="选择合适的_WebView_缓存">选择合适的 WebView 缓存</h4><p>WebView  缓存看似就是开启几个开关的问题，但是要弄懂这几种缓存机制还是很有深度。下图是腾讯某工程师总结六种 H5 常用的缓存机制的优势及适用场景。</p>
-<p><img src="http://mmbiz.qpic.cn/mmbiz/tnZGrhTk4delibZt2QKicny2hzbfkAftd1elIRicib9mYgASTDqqCUoibDWdicDP57evMYRwY2UGKzLu8TSC2FTa7vIw/0?wx_fmt=png" alt="图片来自Bugly"></p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/H5_cache.png" alt="图片来自Bugly"></p>
 <h5 id="浏览器缓存机制：">浏览器缓存机制：</h5><p>主要前端负责，Android 端不需要进行特别的配置。</p>
 <h5 id="Dom_Storage（Web_Storage）存储机制：">Dom Storage（Web Storage）存储机制：</h5><p>配合前端使用，使用时需要打开 DomStorage 开关。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#10;##### Web SQL Database &#23384;&#20648;&#26426;&#21046;&#65306;&#10;&#10;&#34429;&#28982;&#24050;&#32463;&#19981;&#25512;&#33616;&#20351;&#29992;&#20102;&#65292;&#20294;&#26159;&#20026;&#20102;&#20860;&#23481;&#24615;&#65292;&#36824;&#26159;&#25552;&#20379;&#19979; Android &#31471;&#20351;&#29992;&#30340;&#26041;&#27861; &#10;&#10;```java&#10;WebView myWebView = (WebView) findViewById(R.id.webview);&#10;WebSettings webSettings = myWebView.getSettings();&#10;webSettings.setDatabaseEnabled(true);&#10;final String dbPath = getApplicationContext().getDir(&#34;db&#34;, Context.MODE_PRIVATE).getPath();&#10;webSettings.setDatabasePath(dbPath)</span><br></pre></td></tr></table></figure>
