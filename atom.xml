@@ -1,0 +1,981 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>MoTalks-默说</title>
+  <subtitle>慢慢来，比较快。</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://motalks.cn/"/>
+  <updated>2016-09-11T15:10:52.000Z</updated>
+  <id>http://motalks.cn/</id>
+  
+  <author>
+    <name>Mo Lin</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Android WebView：性能优化不得不说的事</title>
+    <link href="http://motalks.cn/2016/09/11/Android-WebView-JavaScript-3/"/>
+    <id>http://motalks.cn/2016/09/11/Android-WebView-JavaScript-3/</id>
+    <published>2016-09-11T10:18:18.000Z</published>
+    <updated>2016-09-11T15:10:52.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 Android 系统版本采用了不同内核的兼容问题等等。 所以当我们使用了 WebView 这个组件的时候，性能优化的事情就不能不提上议程了。这篇文章我们就针对上述问题来总结下 Android WebView 性能优化的常见方法。</p>
+</blockquote>
+<h3 id="页面加载速度优化">页面加载速度优化</h3><p>影响页面加载速度的因素有非常多，我们在对 WebView 加载一个网页的过程进行调试发现，每次加载的过程中都会有较多的网络请求，除了 web 页面自身的 URL 请求，还会有 web 页面外部引用的JS、CSS、字体、图片等等都是个独立的 http 请求。这些请求都是串行的，这些请求加上浏览器的解析、渲染时间就会导致 WebView 整体加载时间变长，消耗的流量也对应的真多。接下来我们就来说说几种优化方案来是怎么解决这个问题的。</p>
+<h4 id="选择合适的_WebView_缓存">选择合适的 WebView 缓存</h4><p>WebView  缓存看似就是开启几个开关的问题，但是要弄懂这几种缓存机制还是很有深度。下图是腾讯某工程师总结六种 H5 常用的缓存机制的优势及适用场景。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/H5_cache.png" alt="图片来自Bugly"></p>
+<h5 id="浏览器缓存机制：">浏览器缓存机制：</h5><p>主要前端负责，Android 端不需要进行特别的配置。</p>
+<h5 id="Dom_Storage（Web_Storage）存储机制：">Dom Storage（Web Storage）存储机制：</h5><p>配合前端使用，使用时需要打开 DomStorage 开关。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WebView myWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">WebSettings webSettings = myWebView.getSettings();</span><br><span class="line">webSettings.setDomStorageEnabled(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="Web_SQL_Database_存储机制：">Web SQL Database 存储机制：</h5><p>虽然已经不推荐使用了，但是为了兼容性，还是提供下 Android 端使用的方法 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">WebView myWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">WebSettings webSettings = myWebView.getSettings();</span><br><span class="line">webSettings.setDatabaseEnabled(<span class="keyword">true</span>);</span><br><span class="line"><span class="keyword">final</span> String dbPath = getApplicationContext().getDir(<span class="string">"db"</span>,Context.MODE_PRIVATE).getPath();</span><br><span class="line">webSettings.setDatabasePath(dbPath)</span><br></pre></td></tr></table></figure>
+<h5 id="Application_Cache_存储机制">Application Cache 存储机制</h5><p>Application Cache（简称 AppCache)似乎是为支持 Web App 离线使用而开发的缓存机制。它的缓存机制类似于浏览器的缓存（Cache-Control  和 Last-Modified）机制，都是以文件为单位进行缓存，且文件有一定更新机制。但 AppCache 是对浏览器缓存机制的补充，不是替代。</p>
+<p>不过根据官方文档，AppCache 已经不推荐使用了，标准也不会再支持。现在主流的浏览器都是还支持 AppCache的，以后就不太确定了。同样给出 Android 端启用 AppCache 的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WebView myWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">WebSettings webSettings = myWebView.getSettings();</span><br><span class="line">webSettings.setAppCacheEnabled(<span class="keyword">true</span>);</span><br><span class="line"><span class="keyword">final</span> String cachePath = getApplicationContext().getDir(<span class="string">"cache"</span>,Context.MODE_PRIVATE).getPath();</span><br><span class="line">webSettings.setAppCachePath(cachePath);</span><br><span class="line">webSettings.setAppCacheMaxSize(<span class="number">5</span>*<span class="number">1024</span>*<span class="number">1024</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="Indexed_Database_存储机制">Indexed Database 存储机制</h5><p>IndexedDB 也是一种数据库的存储机制，但不同于已经不再支持的 Web SQL Database。IndexedDB 不是传统的关系数据库，可归为 NoSQL 数据库。IndexedDB 又类似于 Dom Storage 的 key-value 的存储方式，但功能更强大，且存储空间更大。</p>
+<p>Android 在4.4开始加入对 IndexedDB 的支持，只需打开允许 JS 执行的开关就好了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">WebView myWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">WebSettings webSettings = myWebView.getSettings();</span><br><span class="line">webSettings.setJavaScriptEnabled(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="File_System_API">File System API</h5><p>File System API 是 H5 新加入的存储机制。它为 Web App 提供了一个虚拟的文件系统，就像 Native App 访问本地文件系统一样。由于安全性的考虑，这个虚拟文件系统有一定的限制。Web App 在虚拟的文件系统中，可以进行文件（夹）的创建、读、写、删除、遍历等操作。很可惜到目前，Android 系统的 WebView 还不支持 File System API。</p>
+<blockquote>
+<p>简单的介绍完了上面六种 H5 常用的缓存模式，想必大家能对 Android WebView 所支持的缓存模式有个粗略的了解。如果想和前端更好的配合使用 Android WebView 所支持的缓存，建议看下这篇文章<a href="http://bugly.qq.com/bbs/forum.php?mod=viewthread&amp;tid=267" target="_blank" rel="external">《H5 缓存机制浅析 移动端 Web 加载性能优化》</a></p>
+</blockquote>
+<h4 id="常用资源预加载">常用资源预加载</h4><p>上面介绍的缓存技术，能优化二次启动 WebView 的加载速度，那首次加载 H5 页面的速度该怎么优化呢？上面分析了一次加载过程会有许多外部依赖的 JS、CSS、图片等资源需要下载，那我们能不能提前将这些资源下载好，等H5 加载时直接替换呢？</p>
+<p>好在从 API 11（Android 3.0）开始，WebView 引入了 shouldInterceptRequest 函数，这个函数有两种重载。</p>
+<ul>
+<li><strong>public WebResourceResponse shouldInterceptRequest(WebView webView, String url)</strong> 从 API 11 引入，API 21 废弃</li>
+<li><strong>public WebResourceResponse shouldInterceptRequest (WebView view, WebResourceRequest request)</strong>  从 API 21 开始引入</li>
+</ul>
+<p>考虑到目前大多数 App 还要支持 API 14，所以还是使用 shouldInterceptRequest (WebView view, String url) 为例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">WebView mWebView = (WebView) findViewById(R.id.webview);</span><br><span class="line">mWebView.setWebViewClient(<span class="keyword">new</span> WebViewClient() &#123;</span><br><span class="line">            <span class="annotation">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> WebResourceResponse <span class="title">shouldInterceptRequest</span><span class="params">(WebView webView, <span class="keyword">final</span> String url)</span> </span>&#123;</span><br><span class="line">                WebResourceResponse response = <span class="keyword">null</span>;</span><br><span class="line">              	<span class="comment">// 检查该资源是否已经提前下载完成。我采用的策略是在应用启动时，用户在 wifi 的网络环境下				// 提前下载 H5 页面需要的资源。</span></span><br><span class="line">                <span class="keyword">boolean</span> resDown = JSHelper.isURLDownValid(url);</span><br><span class="line">                <span class="keyword">if</span> (resDown) &#123;</span><br><span class="line">                    jsStr = JsjjJSHelper.getResInputStream(url);</span><br><span class="line">                    <span class="keyword">if</span> (url.endsWith(<span class="string">".png"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/png"</span>, <span class="string">".png"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".gif"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/gif"</span>, <span class="string">".gif"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".jpg"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/jepg"</span>, <span class="string">".jpg"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".jepg"</span>)) &#123;</span><br><span class="line">                        response = getWebResourceResponse(url, <span class="string">"image/jepg"</span>, <span class="string">".jepg"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".js"</span>) &amp;&amp; jsStr != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        response = getWebResourceResponse(<span class="string">"text/javascript"</span>, <span class="string">"UTF-8"</span>, <span class="string">".js"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".css"</span>) &amp;&amp; jsStr != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        response = getWebResourceResponse(<span class="string">"text/css"</span>, <span class="string">"UTF-8"</span>, <span class="string">".css"</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (url.endsWith(<span class="string">".html"</span>) &amp;&amp; jsStr != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        response = getWebResourceResponse(<span class="string">"text/html"</span>, <span class="string">"UTF-8"</span>, <span class="string">".html"</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 若 response 返回为 null , WebView 会自行请求网络加载资源。 </span></span><br><span class="line">                <span class="keyword">return</span> response;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> WebResourceResponse <span class="title">getWebResourceResponse</span><span class="params">(String url, String mime, String style)</span> </span>&#123;</span><br><span class="line">        WebResourceResponse response = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            response = <span class="keyword">new</span> WebResourceResponse(mime, <span class="string">"UTF-8"</span>, <span class="keyword">new</span> FileInputStream(<span class="keyword">new</span> File(getJSPath() + TPMD5.md5String(url) + style)));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getJsjjJSPath</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String splashTargetPath = JarEnv.sApplicationContext.getFilesDir().getPath() + <span class="string">"/JS"</span>;</span><br><span class="line">        <span class="keyword">if</span> (!TPFileSysUtil.isDirFileExist(splashTargetPath)) &#123;</span><br><span class="line">            TPFileSysUtil.createDir(splashTargetPath);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> splashTargetPath + <span class="string">"/"</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="常用_JS_本地化及延迟加载">常用 JS 本地化及延迟加载</h4><p>比预加载更粗暴的优化方法是直接将常用的 JS 脚本本地化，直接打包放入 apk 中。比如 H5 页面获取用户信息，设置标题等通用方法，就可以直接写入一个  JS 文件，放入 asserts 文件夹，在 WebView 调用了onPageFinished() 方法后进行加载。需要注意的是，在该  JS 文件中需要写入一个 JS 文件载入完毕的事件，这样前端才能接受都爱  JS 文件已经种植完毕，可以调用 JS 中的方法了。 附上一段本地化的 JS 代码。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">javascript: ;</span><br><span class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="built_in">window</span>.JSBridge = &#123;</span><br><span class="line">      <span class="string">'invoke'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> args = [].slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>),</span><br><span class="line">          callback = args.pop(),</span><br><span class="line">          params, obj = <span class="keyword">this</span>[name];</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">'function'</span>) &#123;</span><br><span class="line">          params = callback;</span><br><span class="line">          callback = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          params = args[<span class="number">0</span>]</span><br><span class="line">        &#125; <span class="keyword">if</span> (<span class="keyword">typeof</span> obj !== <span class="string">'object'</span> || <span class="keyword">typeof</span> obj.func !== <span class="string">'function'</span>) &#123;</span><br><span class="line">          callback(&#123;</span><br><span class="line">            <span class="string">'err_msg'</span>: <span class="string">'system:function_not_exist'</span></span><br><span class="line">          &#125;);</span><br><span class="line">          <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        obj.callback = callback;</span><br><span class="line">        obj.params = params;</span><br><span class="line">        obj.func(params)</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">'on'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">event, callback</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">var</span> obj = <span class="keyword">this</span>[<span class="string">'on'</span> + event];</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> obj !== <span class="string">'object'</span>) &#123;</span><br><span class="line">          callback(&#123;</span><br><span class="line">            <span class="string">'err_msg'</span>: <span class="string">'system:function_not_exist'</span></span><br><span class="line">          &#125;);</span><br><span class="line">          retrun</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> callback !== <span class="string">'undefined'</span>) obj.callback = callback</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">'login'</span>: &#123;</span><br><span class="line">        <span class="string">'func'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">params</span>) </span>&#123;</span><br><span class="line">          prompt(<span class="string">"login"</span>, <span class="built_in">JSON</span>.stringify(params))</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'params'</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">'callback'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;&#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="string">'settitle'</span>: &#123;</span><br><span class="line">        <span class="string">'func'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">params</span>) </span>&#123;</span><br><span class="line">          prompt(<span class="string">"settitle"</span>,<span class="built_in">JSON</span>.stringify(params))</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="string">'params'</span>: &#123;&#125;,</span><br><span class="line">        <span class="string">'callback'</span>: <span class="function"><span class="keyword">function</span>(<span class="params">res</span>) </span>&#123;&#125;</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;<span class="keyword">catch</span>(e)&#123;</span><br><span class="line">    alert(<span class="string">'demo.js error:'</span>+e);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">var</span> readyEvent = <span class="built_in">document</span>.createEvent(<span class="string">'Events'</span>);</span><br><span class="line">  readyEvent.initEvent(<span class="string">'JSBridgeReady'</span>, <span class="literal">true</span>, <span class="literal">true</span>);</span><br><span class="line">  <span class="built_in">document</span>.dispatchEvent(readyEvent)</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure>
+<p><strong>关于 JS 延迟加载</strong></p>
+<blockquote>
+<p>Android 的 OnPageFinished 事件会在 Javascript 脚本执行完成之后才会触发。如果在页面中使 用JQuery，会在处理完 DOM 对象，执行完 <strong>$(document).ready(function() {});</strong> 事件自会后才会渲染并显示页面。而同样的页面在 iPhone 上却是载入相当的快，因为 iPhone 是显示完页面才会触发脚本的执行。所以我们这边的解决方案延迟 JS 脚本的载入，这个方面的问题是需要Web前端工程师帮忙优化的。</p>
+</blockquote>
+<h3 id="使用第三方_WebView_内核">使用第三方 WebView 内核</h3><p>WebView 的兼容性一直也是困扰我们 Android 开发者的一个大问题，不说 Android 4.4 版本 Google 使用了Chromium 替代 Webkit 作为 WebView 内核，就看看国内众多的第三方 ROM 都有可能会对原生的 WebView 做出修改，这时候如果出现兼容问题，是非常难定位到问题和解决的。</p>
+<p>在一次使用微信浏览订阅公众号文章的过程中，发现微信的 H5 页面有一行 『QQ 浏览器 X5 内核提供技术支持』。顺着这个线索我就找到了<a href="http://x5.tencent.com/index" target="_blank" rel="external">腾讯浏览服务</a>。发现腾讯已经把这个功能开放了，而且集成的 SDK 很小只有212 KB。这是很惊人的，通过介绍才发现这个 SDK 是可以共享微信和手机 QQ 的  X5 内核。这就很方便了，作为国内市场最不可或缺的两个 App，我们能只需要集成一个很小的 SDK 就可以共享使用 X5 内核了，不得不说腾讯还是很有想法的。</p>
+<p>简单摘录些功能亮点，想必能让大家高潮一番。详细内容大家可以直接到<a href="http://x5.tencent.com/index" target="_blank" rel="external">腾讯浏览服务</a>看看，我相信不会让你们失望的。</p>
+<blockquote>
+<p><strong>网页浏览能力</strong></p>
+<p>Web页面crash率降低75%</p>
+<p>页面打开速度提升35%</p>
+<p>流量节省60%</p>
+<p><strong>阅读模式</strong></p>
+<p>去除网页中广告等杂质</p>
+<p>优化文章的阅读体验</p>
+<p><strong>文件打开能力</strong></p>
+<p>包括会话页的互传文件及邮件中附件</p>
+<p>支持doc、ppt、xls、pdf等办公格式</p>
+<p>支持jpg、gif、png、bmp等图片格式</p>
+<p>支持zip、rar等压缩文件</p>
+<p>支持mp3、mp4、RMVB等音视频格式</p>
+<p><strong>视频菜单能力</strong></p>
+<p>支持屏幕调节等常规视频菜单功能</p>
+<p>灵活切换全屏&amp;小窗功能</p>
+</blockquote>
+<h3 id="WebView_导致的内存泄露">WebView 导致的内存泄露</h3><blockquote>
+<p>Android 中的 WebView 存在很大的兼容性问题，不仅仅是 Android 系统版本的不同对 WebView 产生很大的差异，另外不同的厂商出货的 ROM 里面 WebView 也存在着很大的差异。更严重的是标准的 WebView 存在内存泄露的问题，看这里<a href="https://code.google.com/p/android/issues/detail?id=5067" target="_blank" rel="external">WebView causes memory leak - leaks the parent Activity</a>。所以通常根治这个问题的办法是为 WebView 开启另外一个进程，通过 AIDL 与主进程进行通信，WebView 所在的进程可以根据业务的需要选择合适的时机进行销毁，从而达到内存的完整释放。</p>
+</blockquote>
+<p>这段话来自<a href="http://hukai.me/android-performance-oom/" target="_blank" rel="external">胡凯</a>翻译的 Google Android 内存优化之 OOM 。这里提到的让 WebView 独立运行在一个进程里，用完 WebView 后直接销毁这个进程，即使内存泄露了，也不会影响到主进程。微信，手 Q 等 App 也采用了这个方案。但是这就涉及到了跨进程通讯，处理起来就比较麻烦。</p>
+<p>另外个解决方案，就是使用自己封装的 WebView，比如上面提到的 X5 内核，且使用 WebView 的时候，不在 XML  里面声明，而是在代码中直接 new 出来，传入 application context 来防止 activity 引用被滥用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">WebView webView =  <span class="keyword">new</span> WebView(getContext().getApplicationContext());</span><br><span class="line">webFrameLayout.addView(webView, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>在使用了这个方式后，基本上 90% 的 WebView 内存泄漏的问题便得以解决。</p>
+<p>上面两个方案，大家可以结合自己的项目情况选择。另外对 WebView 内存泄露原因感兴趣的可以看看这篇文章。</p>
+<p><a href="http://bugly.qq.com/bbs/forum.php?mod=viewthread&amp;tid=516" target="_blank" rel="external">《Android中导致内存泄漏的竟然是它—-Dialog》</a></p>
+<h3 id="参考文章">参考文章</h3><p><a href="http://bugly.qq.com/bbs/forum.php?mod=viewthread&amp;tid=267" target="_blank" rel="external">《H5 缓存机制浅析 移动端 Web 加载性能优化》</a></p>
+<p><a href="http://www.jianshu.com/p/c2412918b2b5" target="_blank" rel="external">《android内存优化之webview》</a></p>
+<h3 id="相关阅读">相关阅读</h3><p><a href="http://motalks.cn/2016/08/27/Android-WebView-JavaScript-2/">《Android WebView：我是怎么和 JavaScript 互撩的？》</a></p>
+<p><a href="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">《Android WebView：JavaScript 调用效率哪家强？》</a></p>
+<blockquote>
+<p>到这里，Android WebView 系列文章就告一段落了，大家还有什么想了解的或者对文中什么知识点有疑惑的，欢迎留言探讨。</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;Mo说：大家通过前两篇文章想必都能顺利的 get 到 WebView 与 JavaScript 交互的技能了。现在 App 嵌入 H5 页面已经是稀松平常的事情了，开发者要面对 WebView 也越来越多的爆发出来，比如页面加载慢，内存泄露，不同 
+    
+    </summary>
+    
+      <category term="Android学习" scheme="http://motalks.cn/categories/Android%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="JavaScript" scheme="http://motalks.cn/tags/JavaScript/"/>
+    
+      <category term="WebView" scheme="http://motalks.cn/tags/WebView/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>拖延，是我和这个世界的一场战争</title>
+    <link href="http://motalks.cn/2016/09/06/%E6%8B%96%E5%BB%B6%EF%BC%8C%E6%98%AF%E6%88%91%E5%92%8C%E8%BF%99%E4%B8%AA%E4%B8%96%E7%95%8C%E7%9A%84%E4%B8%80%E5%9C%BA%E6%88%98%E4%BA%89/"/>
+    <id>http://motalks.cn/2016/09/06/拖延，是我和这个世界的一场战争/</id>
+    <published>2016-09-05T16:18:18.000Z</published>
+    <updated>2016-09-05T16:36:26.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>默说：在看《拖延心理学》这本书之前，我只是简单的把拖延症当做我的坏习惯之一，并没有透过拖延的表象去挖掘出自己为什么会拖延，这篇阅读笔记我们就来归纳归纳书里说的到底是什么样的心理导致你不断的陷入拖延泥潭。</p>
+</blockquote>
+<h3 id="不，没人能强迫我做任何事，包括我自己">不，没人能强迫我做任何事，包括我自己</h3><p>如果你有一个妈，你也许正在被催着整理你那乱糟糟的书桌、书包、床铺。然而此刻你还在抱着你的手机沉浸在你的二次元世界，或者是开着电脑陪着小学生 LOL，又或者在舔着屏幕看着你的爱豆演的韩剧泪眼婆娑。</p>
+<p>如果你有一个媳妇，你也许正在被催着修理卫生间漏水的马桶，厨房不畅通的下水道，还有晚上忽明忽暗的日光灯。然而你还是在义无反顾的看着永远让人揪心的国足比赛，或者陪着那群狐朋狗友喝着啤酒撸着串，又或看着《权利的游戏》幻想着龙妈拯救世界。</p>
+<p>如果这些都没有，你还会有一个这样的自己：你决定减肥，规定每天只能摄入1200卡的食物，你的冰箱塞满了蔬菜，鸡胸肉，脱脂牛奶。但是你却总有办法不去动它们，而且你还会偷偷的吃一块巧克力（装作无意中吃了一块，或者是说奖励了自己吃一块）。</p>
+<p>回忆下你自己的拖延问题，以上这些情景是不是让你感到似曾相识？你甚至还会为自己的拖延感到骄傲，因为你迫不及待的向这个世界表达出了『不！你不能强迫我就范！』，你会在你自己感觉良好的时候去做该做的事情，而不是你妈或者任何人叫你去做的时候，拖延成了这场争夺战的一个策略————它成为了争夺控制权以及赢得尊敬和独立自主的一场争夺战。</p>
+<p>『我是一个拥有自主权的人，我根据自己的选择来行动。我没有必要按照你的规定或者要求来做事』</p>
+<p>想想你自己或者周围的拖延症患者，上面这句话是不是经常挂在他们嘴边。拖延似乎就是他们的独立宣言，利用拖延来抵制被人控制来保有他们的独立的个体感，他们必须确认他们是按自己的方式在生活。</p>
+<p>当我们理解了拖延不仅仅是为了争夺控制权而战，也是为了自我价值感和自我尊重而战时，我们才会明白为什么在这样的争战中会激起这么强烈的恐惧，为什么我们这些拖延者会如此顽固的不愿意改变。</p>
+<blockquote>
+<p>“如果你的自我价值感是建立在不让别人左右你的能力上，那么每一次跟人打交道都会让你如临大敌。一次小小的挫败就会让你觉得自己做了某种妥协，而你作为独立个体的身份感也会处于动摇之中。生活也因此成了一个战场，你在其中跟每一个规则开战，为每一件事情争执，或者不论大小场合都要求别人对你特殊对待。在你大脑深处，你或许一直在评估谁更强势，谁处于控制地位，谁占上风。你随时都准备好反抗权威，在事态中施加自己的影响力。”<br>“虽然对我们每个人来说，对自己的生活具有一定的掌控感是十分重要的一件事，但是同样重要的是，我们也必须学会去遵守那些不是我们自己所制定的规则，并顺应别人的需要。然而，那些对掌控感十分敏感的人或许不喜欢任何规则，他们会抗拒任何他人对自己的要求；对他们中的有些人而言，拖延成了他们获取掌控感的一种方式。”</p>
+</blockquote>
+<h3 id="秘密的战斗">秘密的战斗</h3><p>我们低调，在自己想做的事情没有到把握成功前不想曝光给全世界。在中国，大部分人都是很内敛的，所以这样的思维也存在很多人的脑海中。可惜的是这种思维很有可能是为你自己拖延找到的一个体面的借口。因为一部分拖延者也会有这样的思维习惯，如果他们决定把自己的利益或者偏好暴露给全世界看的时候，他们就不再能完全控制局面。对害怕在争战中败下阵来的拖延者而言，把自己所想所感暴露给别人看会让他们感到自己极为脆弱。因为这样意味这他们对自己生活的控制权利随时会被别人挑战，甚至剥夺，他们的弱点会被追究，而在秘密中战斗似乎会安全很多。</p>
+<blockquote>
+<p>“在抉择和承诺中拖延是保护你自己的一种间接方式，因为别人对你的立场不清楚，就无法限制你。然而，一旦你做出了抉择或者承诺，你或许会感到自己中了圈套或者被暴露在众目睽睽之下。你那基于不可知和无从捉摸的安全感就会消失。你唯一的保护看来就是免于做出任何大小的承诺。那样的话，你就可以在别人一有任何控制你企图的时候就转而投身别的事情，你随时随地都可以躲避。”</p>
+</blockquote>
+<h3 id="我该怎么办？">我该怎么办？</h3><blockquote>
+<p>“一旦你知道拖延与对受人控制过于敏感有关，你就可以将自己的抵制情绪当做一种警示。当你产生了抵制的冲动时，你可以这样问自己：“我这样的反应针对的是什么？”有时候你会发现你的抵制是相当有道理的：有人确实试图控制你，约束你的独立行为，或者利用你。但是也有一些时候，你的抵制情绪来自于你自身的恐惧，而并非来自于现实状况。一个请求不一定意味着控制；一个规则并不必然是一个无法逃脱的牢房，而与人合作也可能是一件令人开心的事情。”</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;默说：在看《拖延心理学》这本书之前，我只是简单的把拖延症当做我的坏习惯之一，并没有透过拖延的表象去挖掘出自己为什么会拖延，这篇阅读笔记我们就来归纳归纳书里说的到底是什么样的心理导致你不断的陷入拖延泥潭。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 
+    
+    </summary>
+    
+      <category term="拆书系列" scheme="http://motalks.cn/categories/%E6%8B%86%E4%B9%A6%E7%B3%BB%E5%88%97/"/>
+    
+    
+      <category term="拖延症" scheme="http://motalks.cn/tags/%E6%8B%96%E5%BB%B6%E7%97%87/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Android WebView：我是怎么和 JavaScript 互撩的？</title>
+    <link href="http://motalks.cn/2016/08/27/Android-WebView-JavaScript-2/"/>
+    <id>http://motalks.cn/2016/08/27/Android-WebView-JavaScript-2/</id>
+    <published>2016-08-27T15:18:18.000Z</published>
+    <updated>2016-08-29T14:05:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在上篇 <a href="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/">各种 JsBridge 调用效率的对比</a> 中已经总结出我们应该用什么方式进行WebView 与 JavaScript 的交互了，这篇我们就正式的进入主题，一步步实现完整的 WebView 与 JavaScript 的交互。</p>
+<h3 id="Demo动图演示">Demo动图演示</h3><p>动图镇楼，演示功能点的顺序是：5-1-2-3-4</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/jsDemo.gif" alt="此处输入图片的描述"></p>
+<h3 id="怎么生成我们需要的_HTML_页面？">怎么生成我们需要的 HTML 页面？</h3><p>当我们get了WebView 和 JavaScript交互的技能时，准备跃跃欲试的时候，就会对这个被这个问题搞懵逼了，他娘的我又不是前端，要我立马写个自己想要的HTML页面臣妾真的办不到啊。</p>
+<h4 id="w3school_是什么？"><a href="http://www.w3school.com.cn/b.asp" target="_blank" rel="external">w3school</a> 是什么？</h4><p>是什么？你咋不点进去看看呢？</p>
+<h4 id="我们需要的_HTML_页面">我们需要的 HTML 页面</h4><p>按照w3school的简单教程我们就可以拼凑出我们所需要的页面了，如下图。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/jsDemo_html.png" alt="我们需要的 HTML 页面"></p>
+<h3 id="我们要实现的5个功能">我们要实现的5个功能</h3><ul>
+<li>Android Native 端调用 HTML 中的 javascript 脚本</li>
+<li>Android Native 端调用 HTML 中的 javascript 脚本并传递参数</li>
+<li>HTML 中的 javascript 脚本调用 Android Native 端的函数</li>
+<li>HTML 中的 javascript 脚本调用Android Native 端的函数并传递参数</li>
+<li>HTML 中的 javascript 脚本与 Android Native端的 Java 代码完整交互流程</li>
+</ul>
+<h4 id="Android_Native_端调用_HTML_中的_js_脚本">Android Native 端调用 HTML 中的 js 脚本</h4><p>该例子中Android Native 端的 java 代码会直接调用 HTML 页面中的js 脚本，实现更改 HTML 页面 subtitle 的功能。<br>Android Native 端的代码为：</p>
+<pre><code>mC<span class="literal">all</span>JsBtn.<span class="built_in">set</span>OnClickListener(new View.OnClickListener() {
+       @Override
+       public void <span class="keyword">on</span>Click(View v) {
+           mC<span class="literal">all</span>JsWithArgsBtn.<span class="built_in">set</span>Text(<span class="string">"Native调用WebView的有参JS脚本"</span>);
+           mWebView.<span class="built_in">load</span>Url(<span class="string">"javascript:changeDemoSubtitle()"</span>);
+       }
+   });
+</code></pre><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">changeDemoSubtitle</span>(<span class="params"></span>)</span>{
+<span class="built_in">document</span>.getElementById(<span class="string">"subtitle"</span>).innerHTML=<span class="string">"我加了点料"</span>;
+</code></pre><p>}</p>
+<h4 id="Android_Native_端调用_HTML_中的_js_脚本并传递参数">Android Native 端调用 HTML 中的 js 脚本并传递参数</h4><p>Android Native 端的代码为：</p>
+<pre><code>mCallJsWithArgsBtn.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() {
+        <span class="annotation">@Override</span>
+        <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+            mCallJsWithArgsBtn.setText(<span class="string">"参数为："</span> + showDevInfo());
+            showDevInfoToH5();
+        }
+    });
+    <span class="keyword">private</span> <span class="function">String <span class="title">showDevInfo</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> <span class="string">"showDevInfo('手机型号:"</span> + android.os.Build.MODEL +
+            <span class="string">",SDK版本:"</span> + android.os.Build.VERSION.SDK +
+            <span class="string">",系统版本:"</span> + android.os.Build.VERSION.RELEASE + <span class="string">"')"</span>;
+}
+
+<span class="keyword">private</span> <span class="function"><span class="keyword">void</span> <span class="title">showDevInfoToH5</span><span class="params">()</span> </span>{
+    mWebView.loadUrl(<span class="string">"javascript:"</span> + showDevInfo());
+}
+</code></pre><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">showDevInfo</span>(<span class="params">info</span>)</span>{
+<span class="built_in">document</span>.getElementById(<span class="string">"subtitle"</span>).innerHTML=info;
+</code></pre><p>}</p>
+<h4 id="HTML_中的_javascript_脚本调用_Android_Native_端的函数">HTML 中的 javascript 脚本调用 Android Native 端的函数</h4><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">disp_confirm</span><span class="params">()</span></span>{
+    confirm();
+}
+</code></pre><p>Android Native 端的代码为：</p>
+<pre><code>mWebView.setWebChromeClient(new <span class="type">WebChromeClient</span>() {
+        @<span class="type">Override</span>
+        public boolean onJsConfirm(<span class="type">WebView</span> view, <span class="type">String</span> url, <span class="type">String</span> message, <span class="type">JsResult</span> <span class="literal">result</span>) {
+            <span class="type">Toast</span>.makeText(<span class="type">MainActivity2</span>.this, <span class="string">"Android_Native_Toast!"</span>, <span class="type">Toast</span>.<span class="type">LENGTH_SHORT</span>).show();
+            }
+            <span class="literal">result</span>.confirm();
+            <span class="keyword">return</span> <span class="literal">true</span>;
+        }
+    });
+</code></pre><h4 id="HTML_中的_javascript_脚本调用Android_Native_端的函数并传递参数">HTML 中的 javascript 脚本调用Android Native 端的函数并传递参数</h4><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">disp_confirm_with_args</span><span class="params">(message)</span></span>{
+    confirm(message);
+    }
+</code></pre><p>Android Native 端的代码为：</p>
+<pre><code>mWebView.setWebChromeClient(new <span class="type">WebChromeClient</span>() {
+        @<span class="type">Override</span>
+        public boolean onJsConfirm(<span class="type">WebView</span> view, <span class="type">String</span> url, <span class="type">String</span> message, <span class="type">JsResult</span> <span class="literal">result</span>) {
+            <span class="type">Toast</span>.makeText(<span class="type">MainActivity2</span>.this, <span class="string">"Android_Native_Toast!接收到的参数message："</span> + message, <span class="type">Toast</span>.<span class="type">LENGTH_SHORT</span>).show();
+            }
+            <span class="literal">result</span>.confirm();
+            <span class="keyword">return</span> <span class="literal">true</span>;
+        }
+    });
+</code></pre><h4 id="HTML_中的_javascript_脚本与_Android_Native端的_Java_代码完整交互流程">HTML 中的 javascript 脚本与 Android Native端的 Java 代码完整交互流程</h4><p>HTML 对应的 js 方法是：</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">disp_confirm_with_args</span><span class="params">(message)</span>{</span>
+    <span class="built_in">confirm</span>(message);
+    }
+    &lt;<span class="built_in">input</span> <span class="built_in">type</span>=<span class="string">"button"</span> onclick=<span class="string">"disp_confirm_with_args('getDevInfo')"</span> value=<span class="string">"点击获取用户手机信息"</span>/&gt;
+</code></pre><p>Android Native 端的代码为：</p>
+<pre><code>mWebView.setWebChromeClient(new <span class="type">WebChromeClient</span>() {
+        @<span class="type">Override</span>
+        public boolean onJsConfirm(<span class="type">WebView</span> view, <span class="type">String</span> url, <span class="type">String</span> message, <span class="type">JsResult</span> <span class="literal">result</span>) {
+            <span class="keyword">if</span> (<span class="string">"getDevInfo"</span>.equals(message)) {
+                showDevInfoToH5();
+            } 
+            }
+            <span class="literal">result</span>.confirm();
+            <span class="keyword">return</span> <span class="literal">true</span>;
+        }
+    });
+    private <span class="type">String</span> showDevInfo() {
+    <span class="keyword">return</span> <span class="string">"showDevInfo('手机型号:"</span> + android.os.<span class="type">Build</span>.<span class="type">MODEL</span> +
+            <span class="string">",SDK版本:"</span> + android.os.<span class="type">Build</span>.<span class="type">VERSION</span>.<span class="type">SDK</span> +
+            <span class="string">",系统版本:"</span> + android.os.<span class="type">Build</span>.<span class="type">VERSION</span>.<span class="type">RELEASE</span> + <span class="string">"')"</span>;
+}
+
+private <span class="type">void</span> showDevInfoToH5() {
+    mWebView.loadUrl(<span class="string">"javascript:"</span> + showDevInfo());
+}
+</code></pre><h4 id="Android_Native_端代码完整展示：">Android Native 端代码完整展示：</h4><p><strong>Activity 代码：</strong></p>
+<pre><code><span class="keyword">package</span> cn.mtalks.jsbridgedemo;
+<span class="keyword">import</span> android.app.Activity;
+<span class="keyword">import</span> android.os.Bundle;
+<span class="keyword">import</span> android.text.TextUtils;
+<span class="keyword">import</span> android.view.View;
+<span class="keyword">import</span> android.webkit.JsResult;
+<span class="keyword">import</span> android.webkit.WebChromeClient;
+<span class="keyword">import</span> android.webkit.WebView;
+<span class="keyword">import</span> android.widget.Button;
+<span class="keyword">import</span> android.widget.Toast;
+
+<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity2</span> <span class="keyword">extends</span> <span class="title">Activity</span> </span>{
+
+<span class="keyword">private</span> WebView mWebView;
+<span class="keyword">private</span> Button mCallJsBtn;
+<span class="keyword">private</span> Button mCallJsWithArgsBtn;
+
+<span class="annotation">@Override</span>
+<span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>{
+    <span class="keyword">super</span>.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main_2);
+    initView();
+    initWebView();
+}
+
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initView</span><span class="params">()</span> </span>{
+    mWebView = (WebView) findViewById(R.id.webview);
+    mCallJsBtn = (Button) findViewById(R.id.call_js_without_args_btn);
+    mCallJsWithArgsBtn = (Button) findViewById(R.id.call_js_with_args_btn);
+
+    mCallJsBtn.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() {
+        <span class="annotation">@Override</span>
+        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+            mCallJsWithArgsBtn.setText(<span class="string">"Native调用WebView的有参JS脚本"</span>);
+            mWebView.loadUrl(<span class="string">"javascript:changeDemoSubtitle()"</span>);
+        }
+    });
+
+    mCallJsWithArgsBtn.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() {
+        <span class="annotation">@Override</span>
+        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+            mCallJsWithArgsBtn.setText(<span class="string">"参数为："</span> + showDevInfo());
+            showDevInfoToH5();
+        }
+    });
+}
+
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initWebView</span><span class="params">()</span> </span>{
+    <span class="comment">//开启JavaScript功能</span>
+    mWebView.getSettings().setJavaScriptEnabled(<span class="keyword">true</span>);
+    <span class="comment">//加载本地html</span>
+    mWebView.loadUrl(<span class="string">"file:///android_asset/JsDemo.html"</span>);
+
+    mWebView.setWebChromeClient(<span class="keyword">new</span> WebChromeClient() {
+        <span class="annotation">@Override</span>
+        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">onJsConfirm</span><span class="params">(WebView view, String url, String message, JsResult result)</span> </span>{
+            <span class="keyword">if</span> (<span class="string">"getDevInfo"</span>.equals(message)) {
+                showDevInfoToH5();
+            } <span class="keyword">else</span> <span class="keyword">if</span> (TextUtils.isEmpty(message)) {
+                Toast.makeText(MainActivity2.<span class="keyword">this</span>, <span class="string">"Android_Native_Toast!"</span>, Toast.LENGTH_SHORT).show();
+            } <span class="keyword">else</span> {
+                Toast.makeText(MainActivity2.<span class="keyword">this</span>, <span class="string">"Android_Native_Toast!接收到的参数message："</span> + message, Toast.LENGTH_SHORT).show();
+            }
+            <span class="comment">//回调通知H5页面用户操作已完成，可以再次点击相关按钮</span>
+            result.confirm();
+            <span class="comment">//设为true，可以消耗掉H5页面的confirm弹窗。</span>
+            <span class="keyword">return</span> <span class="keyword">true</span>;
+        }
+    });
+}
+
+<span class="function"><span class="keyword">private</span> String <span class="title">showDevInfo</span><span class="params">()</span> </span>{
+    <span class="keyword">return</span> <span class="string">"showDevInfo('手机型号:"</span> + android.os.Build.MODEL +
+            <span class="string">",SDK版本:"</span> + android.os.Build.VERSION.SDK +
+            <span class="string">",系统版本:"</span> + android.os.Build.VERSION.RELEASE + <span class="string">"')"</span>;
+}
+
+<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">showDevInfoToH5</span><span class="params">()</span> </span>{
+        mWebView.loadUrl(<span class="string">"javascript:"</span> + showDevInfo());
+    }
+}
+</code></pre><p><strong>XML 代码</strong></p>
+<pre><code><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="tag">&lt;<span class="title">LinearLayout</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:orientation</span>=<span class="value">"vertical"</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">LinearLayout</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+    <span class="attribute">android:background</span>=<span class="value">"#000000"</span>
+    <span class="attribute">android:orientation</span>=<span class="value">"vertical"</span>&gt;</span>
+
+    <span class="tag">&lt;<span class="title">TextView</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_marginBottom</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingBottom</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingTop</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:text</span>=<span class="value">"Android_Native"</span>
+        <span class="attribute">android:textColor</span>=<span class="value">"#FFFFFF"</span> /&gt;</span>
+
+    <span class="tag">&lt;<span class="title">Button</span>
+        <span class="attribute">android:id</span>=<span class="value">"@+id/call_js_without_args_btn"</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_margin</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:text</span>=<span class="value">"Native调用WebView的JS脚本"</span> /&gt;</span>
+
+    <span class="tag">&lt;<span class="title">Button</span>
+        <span class="attribute">android:id</span>=<span class="value">"@+id/call_js_with_args_btn"</span>
+        <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+        <span class="attribute">android:layout_height</span>=<span class="value">"wrap_content"</span>
+        <span class="attribute">android:layout_margin</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingBottom</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:paddingTop</span>=<span class="value">"10dp"</span>
+        <span class="attribute">android:text</span>=<span class="value">"Native调用WebView的有参JS脚本"</span> /&gt;</span>
+<span class="tag">&lt;/<span class="title">LinearLayout</span>&gt;</span>
+
+<span class="tag">&lt;<span class="title">WebView</span>
+    <span class="attribute">android:id</span>=<span class="value">"@+id/webview"</span>
+    <span class="attribute">android:layout_width</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:layout_height</span>=<span class="value">"match_parent"</span>
+    <span class="attribute">android:background</span>=<span class="value">"#FFFFFF"</span>
+    /&gt;</span>
+<span class="tag">&lt;/<span class="title">LinearLayout</span>&gt;</span>
+</code></pre><p><strong>AndroidManifest 文件</strong></p>
+<pre><code><span class="pi">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="tag">&lt;<span class="title">manifest</span> <span class="attribute">xmlns:android</span>=<span class="value">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attribute">package</span>=<span class="value">"cn.mtalks.jsbridgedemo"</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.INTERNET"</span> /&gt;</span>
+    <span class="tag">&lt;<span class="title">uses-permission</span> <span class="attribute">android:name</span>=<span class="value">"android.permission.READ_PHONE_STATE"</span> /&gt;</span>
+    <span class="tag">&lt;<span class="title">application</span>
+        <span class="attribute">android:allowBackup</span>=<span class="value">"true"</span>
+        <span class="attribute">android:icon</span>=<span class="value">"@mipmap/ic_launcher"</span>
+        <span class="attribute">android:label</span>=<span class="value">"@string/app_name"</span>
+        <span class="attribute">android:supportsRtl</span>=<span class="value">"true"</span>
+        <span class="attribute">android:theme</span>=<span class="value">"@style/AppTheme"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">activity</span>
+            <span class="attribute">android:name</span>=<span class="value">".MainActivity2"</span>
+            <span class="attribute">android:label</span>=<span class="value">"@string/app_name"</span>&gt;</span>
+            <span class="tag">&lt;<span class="title">intent-filter</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">action</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.action.MAIN"</span> /&gt;</span>
+                <span class="tag">&lt;<span class="title">category</span> <span class="attribute">android:name</span>=<span class="value">"android.intent.category.LAUNCHER"</span> /&gt;</span>
+            <span class="tag">&lt;/<span class="title">intent-filter</span>&gt;</span>
+
+        <span class="tag">&lt;/<span class="title">activity</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">application</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">manifest</span>&gt;</span>
+</code></pre><h3 id="友情提示">友情提示</h3><p>其实在JavaScript调用 Java本地方法，谷歌官方的实现方法应该是使用 JavascriptInterface 方式。但是该方式在 Android4.2版本之前存在安全漏洞，感兴趣的<a href="http://blog.csdn.net/leehong2005/article/details/11808557" target="_blank" rel="external">看这里</a>。在Android4.2版本之后加入了@JavascriptInterface注解才得以解决，考虑到目前 Android 版本碎片化太严重，使用JavascriptInterface并不适合，这也是上篇文章没把它放入效率对比的原因。</p>
+<p>以上就是一个完整的 WebView 与 JavaScript 的交互例子。大家可以自己动手试试上篇文章介绍的ShouldInterceptRequest方式来实现这个例子。</p>
+<h3 id="下篇预告">下篇预告</h3><p>Webview 页面展示优化。除了 HTML 页面自己的优化，在 Android Native 端能为加载速度做些什么优化么？下篇文章会给你答案，比如公共 Js 方法提取放入本地，JS,CSS,图片资源预加载等等。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在上篇 &lt;a href=&quot;http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/&quot;&gt;各种 JsBridge 调用效率的对比&lt;/a&gt; 中已经总结出我们应该用什么方式进行WebView 与 JavaScript 的交
+    
+    </summary>
+    
+      <category term="Android学习" scheme="http://motalks.cn/categories/Android%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="JavaScript" scheme="http://motalks.cn/tags/JavaScript/"/>
+    
+      <category term="WebView" scheme="http://motalks.cn/tags/WebView/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>拆书系列：《拖延心理学》 Part1：行为</title>
+    <link href="http://motalks.cn/2016/08/22/%E6%8B%86%E4%B9%A6%E7%B3%BB%E5%88%97%EF%BC%9A%E3%80%8A%E6%8B%96%E5%BB%B6%E5%BF%83%E7%90%86%E5%AD%A6%E3%80%8B%20Part1%EF%BC%9A%E8%A1%8C%E4%B8%BA/"/>
+    <id>http://motalks.cn/2016/08/22/拆书系列：《拖延心理学》 Part1：行为/</id>
+    <published>2016-08-22T15:18:18.000Z</published>
+    <updated>2016-08-22T16:22:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote>
+<p>墨说：用了一周的时间看完了上周宇明推荐的《拖延心理学》，现在记录一下看完全书的感想以及做一份读书笔记，加深一些印象，希望能将这些心得化为己用。该书分为五个部分：行为、心里、大脑、征服、建议。所以我也会分为五个部分来拆。</p>
+</blockquote>
+<h3 id="拖延的行为">拖延的行为</h3><ol>
+<li><h4 id="拖延和延后的区别">拖延和延后的区别</h4>拖延是将重要且紧急的事情没有及时处理，这些事情会导致严重的后果，所以会让我们感到烦恼不已。而延后是因为我们没有时间去做每一件事，我们需要一定的放松和休息，这时候将一些重要不紧急、不重要但紧急、不重要且不紧急的事情延后处理。正因如此，这些事情的延后不会让我们感到烦恼不已，或者只是有一点烦恼。</li>
+<li><h4 id="拖延怪圈：我想这个心路历程每个拖延症患者都深有体会吧。">拖延怪圈：我想这个心路历程每个拖延症患者都深有体会吧。</h4><blockquote>
+<p><strong>“这次我想早点开始。”</strong><br>一开始，我们都信心满满，相信自己这一次一定会以一种有条不紊的方式将它完成。虽然你感到自己不能够或者不愿意马上就开始，但是你还是相信：不管怎么样，事情不需要你做什么特别的安排，总会自然而然地启动。只有当一段时间过去之后，你发现这一次的情况并不比以前好多少的时候，你的希望才变成了担忧。<br><strong>“我得马上开始。”</strong><br>“早点开始的时机已经失去了，这一次想要好好做的幻想破灭了。你开始焦虑，压力也逐渐加重。你不再盼望自己会自发地开始上手做事，开始感到需要马上得做点什么，但是离最后期限还远着呢，所以你还是抱着一些希望。”<br><strong>“我不开始又怎么样呢？”</strong><br>“时间又过去了，你还是没有上手做事，现在的问题不再是如何有一个理想的开端，甚至也不再是如何给自己做事的压力，而是一种不祥的预感取代了所有那些剩余的乐观情绪。想到自己可能永远也不会开始，你的脑海中不禁闪现出那些可能会永远地毁了你生活的可怕后果。”</p>
+</blockquote>
+</li>
+<li><h4 id="拖延的根源">拖延的根源</h4><blockquote>
+<p>我们认为，人们之所以产生拖延的不良习性，是因为他们害怕。他们害怕如果他们行动了，他们的行为会让他们陷入麻烦。他们担心如果展示了自己真实的一面，会有危险的结果等着他们。在所有无序和拖拉的背后，他们其实在害怕他们不被接受，以至于他们不仅躲开这个世界，甚至还躲开他们自己。虽然要忍受自责、自轻和对自己的反感是相当痛苦的，但是比起去看清真实的自我所带来的脆弱和无地自容，这样的感受或许更能够被承受得起，拖延是保护他们的盾牌。</p>
+</blockquote>
+</li>
+<li><h4 id="拖延的具体表现之恐惧失败">拖延的具体表现之恐惧失败</h4><blockquote>
+<p><strong>恐惧失败：追求完美</strong><br>那些拖延的人往往没有意识到他们是完美主义者。为了证明他们足够优秀，他们力求做到不可能做到的事情，认为要达成他们的远大目标应该没有任何问题。他们常常对自己有不现实的要求，当无法实现这样的要求时，就会变得不知所措。失望之余，他们通过拖延让自己从中退却，多数拖延者并不明白，在他们经常把事情搞得一团糟时，怎么还可能被看成是完美主义者。<br>对于完美主义者，心理学家甄别出两种类型，一种是适应型的，一种是适应不良型的。一个适应型的完美主义者对自己要求很高，并且相信自己的表现能够与之相符。这样一种能够如愿以偿的完美主义，感觉上去就像一个人本性的一部分，也是一个人自尊的基石。然而，一个适应不良的完美主义者对自己要求也很高，但是却对自己不抱希望。在适应不良型的完美主义中，你对自己的要求跟你对自己表现的期待之间存在着一种矛盾，所以你更容易去自责，也更容易感到消沉，你的自尊因而也处于较低的水平。<br>一个多年没有锻炼的女性想要在两周时间内改善自己的体型。一个第一次写小说的人想要自己的第一部手稿就能达到出版的要求。一个不懂时间管理和学习技巧的大学新生希望自己在第一学期的所有成绩都是优等。一个年轻小伙子想要自己的每一个电话都能促成一个约会。一个销售员希望让每一个顾客购买他的产品和服务。结果，这些本来可以激发人们动力的高标准却成了阻碍他们付出努力的不可能达成的要求。你需要问自己一个相当重要的问题：你是为了让自己取得进步，还是为了让自己陷入沮丧和挫折而设立标准？决定你是否是一个适应不良型的完美主义者的不是你所制定的高标准，而是你所期待自己的表“现跟你的标准之间的落差多大，你的标准是否现实可行，以及在不能达成目标时你对自己的判断有多苛刻。当完美主义成了一个问题的时候，拖延就很可能也成为一个问题。<br><strong>恐惧失败：心态</strong><br>斯坦福大学心理学家卡罗·德威克（Carol Dweck）的研究成果支持了我们对拖延者完美主义倾向的观察。在研究人怎样面对失败的时候，她识别出了两种不同的心态，一种是固定心态（fixed mindset），一种是成长心态（growth mindset）。固定心态认为：智力和才能是与生俱来的，是固定不变的。成功不过就是要证明你的能力，证明你是聪明的、有才干的。并且，在生活中面对每一个挑战的时候，你必须一再地证实这一点。如果你具有固定心态，就容不得任何情况的任何错误，因为错误是失败的证据，错误说明了你其实根本不聪明，也没有才干。“同时，每一次表现都被看成是对你能力的一次定论性衡量，失败令你感到危险；失败永远地决定了你这个人。<br>综上所述，你可以看到失败的恐惧是如何从固定心态衍生出来的，它又是如何导致拖延的。当事情变得艰难，有着固定心态的人开始退缩并丧失兴趣。他们不想做任何可能会证明自己不能胜任的事情，或者证明自己毫无价值的事情。拖延从可能导致失败的风险中将人们保护起来，而这样的失败在一个有固定心态的人看来，是对他不能胜任的一次人生判决。”<br><strong>恐惧失败：思维模式</strong><br>“完美主义者在思考他们所做事情的时候容易绝对化，也经常以灾难性的方式思考问题；一件小事的后果（比如说一个小错误）往往被他们夸大到无以复加的程度。一件小事就足以让他们感到大祸临头。在他们这样的反应中，你可以看出是他们的固定心态在起作用。<br>当这种灾难性的预期模模糊糊、莫可名状的时候，它们甚至更为可怕：“假如我不够完美的话，我的生活将会陷入悲惨的境地！”但是，你的生活究竟会悲惨到什么样子呢？让拖延者明确说出那些让他们不得安宁的莫名幻想究竟是什么，这常常既有趣又有益。除了那种厄运临头的感觉之外，你或许还总认为自己够不上优秀，那么你看到的灾祸究竟是怎样的呢？事情到底变得有多坏呢？是什么事件才会导致最后的灾祸呢？”</p>
+</blockquote>
+</li>
+<li><h4 id="拖延的具体表现之恐惧成功">拖延的具体表现之恐惧成功</h4>大家试着回忆回忆自己学生或工作生涯中，当你有机会自荐当班长或者小组长的时候，你没有举手或者站上讲台竞选的原因是什么，我想，这里的情形恐惧成功和恐惧失败的人基本一样多吧？<blockquote>
+<p><strong>成功需要太多付出：这令我望而却步</strong><br>有些人担心成功需要付出太多，远远超出他们所能承受的程度。那些害怕成功的人不愿意加入到竞争中是因为他们害怕自己胜出，从而通过拖延来掩藏自己的野心，因为他们认为竞争本身就有问题；那些害怕成功的人担忧人们会加大对他的期待，这是他们的焦虑所在。承诺恐惧，那些害怕成功的人会担心做出承诺会让他们在为成功做好准备之前卷入竞争。<br>我们发现这个想法极为有趣，它有一个没有挑明的意思，那就是：成功毫无例外地会导致一个人失去对自己生活的控制权和选择权。拖延者常常有以下想法：因为拖延的习性是他们所无法控制的，所以他们的工作也将会无法控制。他们害怕如果他们不拖延（一种强迫性的拖延），他们就会注定成为强迫性工作的牺牲品。对于成为一个工作狂的恐惧暴露了你的担心，你担心成功所能带来的不是一种力量感而是一种无助感，你担心自己不再是原来的自己，你会变成一个自己不喜欢的人，而你又没有能力将这个陌生的你挡在门外。<br><strong>成功是危险的：总有人会受到伤害</strong><br>我不能伤害别人。你是否曾经有过这样的经验：当你遇到一件好事的时候，你却装做轻描淡写，或者拼命将它掩盖起来，因为你不想冒犯别人？或许你将自己论文获得A级的事情对你的好友们保密，因为你只是临时抱佛脚就获得了一个A，而你的好友们花了很多工夫却只获得了B或者C。又可能你没有告诉你父亲你最近涨了工资，因为你不想让他知道你赚的钱早已超过了他。<br>你或许注意到了你的一个好消息对别人而言却是一个坏消息。当然，有时候不让别人知道你的成功只不过是一种谦虚，没有人喜欢吹牛的人。但是许多拖延者却走向了极端，而不只是为了考虑到别人的感受，他们为了抬高别人而贬低自己。当你假定获得成功意味着伤害他人，你就在成功与侵犯之间画上了等号。你或许会利用拖延战术来逃离战场，好让自己不用活在负疚感中。<br>虽然我们担心自己的成功会伤害到其他人，但是他们或许要比我们想象的更加坚强、大方。也许这是我们自己思考方式上的问题，也许我们扭曲和误会了周围的现实，让我们以为我们的成就不可避免地会伤害到别人。有些人就乐于看到别人成功，而不会感到自己被贬低、受到伤害或者落在后面。<br>我会受到伤害。许多人预感到成功会给他们带来的危险之一是他们确实会得到自己想要的——但是接着就会受到攻击。有人会向他挑衅，或者批评他，但是他感到自己不够强大，无法还击。所以，他们通过拖延不去获得成功来保护自己。<br><strong>成功是禁区：我觉得自己不对劲</strong><br>我不配成功。拖延可能会被用于对做了坏事的一种惩罚。我们遇到过一些拖延者确实做了一些有违道德或者伤害他人的事情，他们也因此会感到内疚，比如说谎、不忠、蒙骗或操纵别人。但是也有很多人感到内疚是因为一些后果并不那么严重的行为，或者因为一些不是他们责任范围内的事情。然而，他们在感到内疚的同时并没有区分什么是真实的罪错什么是想象的罪错。<br>令人悲哀的是，这些拖延者所感受到的内疚远远超过了他们所谓的“罪过”所应该承受的范围。而且，除了想拓展自己和走自己的人生之路这样的想法之外，他们常常并没有什么过错，但正是这样的想法让他们产生了内疚。相信自己有权利走自己的人生之路，这样的决断或许会让你跟自己的家庭和文化观念发生冲突。在一些文化传统中，拥有一个自己的人生要比照顾家庭成员和考虑集体需要次要得多。在美国，个人是基本的社会单元，而在许多其他文化中，家庭是最为核心的社会单元，它们并不鼓励以牺牲家庭为代价去追求个人的成功。<br>我命中注定不能获得成功。有些人的自我评价是如此之差，以至于他们认为自己根本与成功无缘。他们认为自己不能胜任、没有准备好或者不受人欢迎，在任何事情上都不认为自己会获得成功，所以他们干脆放弃了尝试<br>另一个极端是有些人觉得自己可能太完美了。有人会担心如果自己不加拖延地全速前进，那么成功会来得太容易，他们将拥有“一切”。但是由于他们的成功得来全不费吹灰之力，他们担心自己会成为众人妒忌的目标。<br>那么，你怎么会得出成功会将人们从你身边推开这样一个结论的呢？你认为或许你的成就会搅扰到你家庭原有的状况，或者你假定会出现这种情况。例如，你感觉到当你做出了一些成就，你的兄弟姐妹或许会感到妒忌或者被冷落；你的家庭或许会失去原有的平衡；你的父母或许会感到不安。最终，你得出结论：如果你达到的成就没有那么大，那么人人都会皆大欢喜，而你也会被人完全接受。不管这些观念是来自于你的实际经验，还是来自于未经检验的臆想，它们都会在你努力达成成功的路途上施加重大的限制性影响。<br>当你在思考拖延与恐惧成功的关系时，你可以尝试退后一步，更加客观地看待自己的状况。提醒自己这一点或许对你会有帮助：光是因为某些事情是你所惧怕的并不意味着它们在当下就是真实的，也不意味着它们永远都是真实的。你一开始就假定成功会使你受到孤立，但是如果你重新检查一下自己的这个假定，你就会很惊奇地发现不是所有人都会利用你的成功来反对你。有人会为你的成功而高兴，并与你共同庆祝。然而，也有一些人不喜欢你成功——甚至是一些跟你关系十分密切的人。如果是这样，你必须面对这样一个问题：你是否可以不顾他们的埋怨以及他们跟你的疏离而继续前进？没有他们的支持，你是否依然能够坚强地继续下去？<br><strong>怎么正确的看待成功？</strong><br>我们能够理解成功可能会对你构成某种威胁，我们也知道这些威胁可能影响重大。当你在人生中做出一个较大改变的时候，即便那个改变是往好的方向发展，你依然会有所忧虑，这是一个自然的反应。要达成自己的成功——无论它是重返大学校园，还是通过锻炼来减肥，也无论是找到一份新工作，还是找到一份新感情或者离开一段旧感情，都无可避免地会涉及生活的变故。变故会让你感到有风险。当你的人生发生了某个变故，你可能遭遇到一个未知的自己，一段未知的关系，或者一个未知的世界。但是我们认为，跟你认为的风险相比，它会让你进入到一个更好的人生阶段。你可以改变自己以适应环境，也可以改变自己以适应成功。</p>
+</blockquote>
+</li>
+</ol>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;blockquote&gt;
+&lt;p&gt;墨说：用了一周的时间看完了上周宇明推荐的《拖延心理学》，现在记录一下看完全书的感想以及做一份读书笔记，加深一些印象，希望能将这些心得化为己用。该书分为五个部分：行为、心里、大脑、征服、建议。所以我也会分为五个部分来拆。&lt;/p&gt;
+&lt;/blockquo
+    
+    </summary>
+    
+      <category term="拆书系列" scheme="http://motalks.cn/categories/%E6%8B%86%E4%B9%A6%E7%B3%BB%E5%88%97/"/>
+    
+    
+      <category term="拖延症" scheme="http://motalks.cn/tags/%E6%8B%96%E5%BB%B6%E7%97%87/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Android WebView：JavaScript 调用效率哪家强？</title>
+    <link href="http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/"/>
+    <id>http://motalks.cn/2016/08/14/Android-WebView-JavaScript-1/</id>
+    <published>2016-08-13T17:10:18.000Z</published>
+    <updated>2016-08-29T16:40:17.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="各种_JsBridge_调用效率的对比">各种 JsBridge 调用效率的对比</h3><p>以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverrideUrlLoading方法来实现这个功能。后来要优化这一部分的功能，就专门用了一段时间来做了一些测试，对比。现在把数据和结论放上来给大家参考参考。</p>
+<p>现在大家常用的Web页面和Native端通信的方式大概有6种，下面会针对这6种方式做下性能测试来选出最优方案。</p>
+<h3 id="参测机型与系统版本："><strong>参测机型与系统版本：</strong></h3><ol>
+<li>Moto Nexus6 OS:6.0.1</li>
+<li>魅族3S  OS:5.1.1</li>
+<li>红米1 OS:4.2.2</li>
+</ol>
+<h3 id="测试用例："><strong>测试用例：</strong></h3><p>在 web 页面上发起请求时记下当前的时间t,并通过 JsBridge伪协议将时间 t 传递给 Native端，Native端收到请求时记录下当前系统时间t2。将t2-t所得的时候就是这次 web 端和 Native端通信的耗时。同样操作执行20次，通过平均时间来比较性能。</p>
+<h3 id="测试函数"><strong>测试函数</strong></h3><h4 id="1-ShouldOverrideUrlLoading"><strong>1.ShouldOverrideUrlLoading</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
+<p>Native端通过重载ShouldOverrideUrlLoading方法进行拦截主资源请求，解析 JsBridge伪协议来获得相关数据。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_ShouldOverrideUrlLoading.png" alt="此处输入图片的描述"></p>
+<h4 id="2-ShouldInterceptRequest"><strong>2.ShouldInterceptRequest</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_ShouldInterceptRequest.png" alt="此处输入图片的描述"></p>
+<p>Native端通过重载ShouldInterceptRequest方法进行拦截子资源请求，解析 JsBridge伪协议来获得相关数据。</p>
+<p>Android 5.0以下系统版本提供的拦截方法：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest.png" alt="此处输入图片的描述"></p>
+<p>Android 5.0及以上系统版本提供的拦截方法可以获得更为丰富的页面信息。在WebResourceRequest有如下方法：getUrl()，isForMainFrame(),hasGesture(),getMethod(),getRequestHeaders()；其中getRequestHeaders()方法可以获得的请求信息最多了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_shouldInterceptRequest_lollipop.png" alt="此处输入图片的描述"></p>
+<h4 id="3-Prompt方式"><strong>3.Prompt方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_prompt.png" alt="此处输入图片的描述"></p>
+<p>Native端重写WebChromeClient的onJsPrompt方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsPrompt.png" alt="此处输入图片的描述"></p>
+<h4 id="4-Alert方式"><strong>4.Alert方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_alert.png" alt="此处输入图片的描述"></p>
+<p>Native端重写WebChromeClient的onJsAlert方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsAlert.png" alt="此处输入图片的描述"></p>
+<h4 id="5-Confirm方式"><strong>5.Confirm方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_confirm.png" alt="此处输入图片的描述"></p>
+<p>Native端重写WebChromeClient的onJsConfirm方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onJsConfirm.png" alt="此处输入图片的描述"></p>
+<h4 id="6-Console方式"><strong>6.Console方式</strong></h4><p>页面请求代码：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_console.png" alt="此处输入图片的描述"></p>
+<p>Native端重写WebChromeClient的onConsoleMessage方法拉处理伪协议请求：</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/native_onConsoleMessage.png" alt="此处输入图片的描述"></p>
+<h3 id="测试结果"><strong>测试结果</strong></h3><p>数据如下图：<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/webview_js_result.png" alt="测试结果"></p>
+<h3 id="测试结论"><strong>测试结论</strong></h3><p>对比上图数据，我们发现使用Confirm方式基本上是耗时最短和最稳定的。如果你不需要更详细的 web 端的信息，使用Confirm方式是性能最好的。但是如果你需要读取 web 端的请求头信息，以及是否是主 frame 发起的请求，你就必须使用子资源拦截方式（intercept方式）了。这些丰富的请求信息对以后权限控制拓展是必须的。</p>
+<h3 id="关于addJavascriptInterface">关于addJavascriptInterface</h3><p>这篇文章从一开始就没打算把 addJavascriptInterface 方式添加到对比的数据中，因为它在 Android4.2 之前的版本存在严重的安全漏洞。谷歌在 Android4.2 之后的版本才通过添加 @JavascriptInterface 注解的方式解决了该问题。这两天又换了个角度思考了一下，该方式作为谷歌官方的 Webview 和 JavaScript 解决方案，肯定会比其他交互方式优秀的地方。历史的车轮滚滚向前，目前大多数用户的系统版本都集中在4.4.2以上了，所以今天还是把这个方式做了个测试。测试数据也证实我的猜测，其时间间隔是最短的。所以，如果你的 App  只打算支持 Android4.2 版本以上的，就可以考虑这个官方解决方案了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/js_javaScriptInterface.png" alt="关于addJavascriptInterface 测试结果"></p>
+<h3 id="下集预告"><strong>下集预告</strong></h3><p>下一篇会写基于Confirm方式以及intercept方式的完整的 JS 交互，即包含了 Native调用 web 端的方法。<br><a href="http://motalks.cn/2016/08/27/Android-WebView-JavaScript-2/">下篇已出，Android WebView：我是怎么和 JavaScript 互撩的？</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;各种_JsBridge_调用效率的对比&quot;&gt;各种 JsBridge 调用效率的对比&lt;/h3&gt;&lt;p&gt;以前在项目中需要实现一个在在WebView的H5页面中点击一个关键字跳转到Native端的指定页面的功能。当时Google了一下就采用了重载ShouldOverride
+    
+    </summary>
+    
+      <category term="Android学习" scheme="http://motalks.cn/categories/Android%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="JavaScript" scheme="http://motalks.cn/tags/JavaScript/"/>
+    
+      <category term="WebView" scheme="http://motalks.cn/tags/WebView/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>设计模式之单例模式的5种实现方式</title>
+    <link href="http://motalks.cn/2016/04/11/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%845%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/"/>
+    <id>http://motalks.cn/2016/04/11/设计模式之单例模式的5种实现方式/</id>
+    <published>2016-04-11T15:15:18.000Z</published>
+    <updated>2016-08-29T14:07:28.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/23802445-1_w_1.jpg" alt="此处输入图片的描述"></p>
+<blockquote>
+<p>单例模式是应用最广的模式之一，也可能是很多初级工程师唯一会使用的设计模式</p>
+</blockquote>
+<p>看到这里，我默默的低下了头，也许其他模式也使用过，但是可以了然于心的也只有单例模式了，因为面试的时候单例模式是必考的。</p>
+<p>今天再回头看看单例模式，还是觉得有必要好好总结一下。</p>
+<p>##懒汉，饥汉模式<br>这是刚开始学习单例模最先接触的两种实现方式。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span><br><span class="line">*  饿汉式</span><br><span class="line">*/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton uniqueInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> uniqueInstance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span><br><span class="line">* 饱汉式</span><br><span class="line">**/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton uniqueInstance;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="comment">//一般饱汉式单例是没有添加 synchronized 同步关键字的，添加后可以解决线程安全问题。</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(uniqueInstance == <span class="keyword">null</span>)&#123;</span><br><span class="line">            uniqueInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> uniqueInstance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>饿汉式的缺点是类一加载就会实例化对象，提前占用系统资源。饱汉式的缺点是会有线程安全问题。在不考虑多线程的情况下可以使用。在多线程时，可能线程1在new Singleton()时（代码24行），被线程2抢占，此时线程1的 uniqueInstance还没被new出来，线程2又会进去new Singleton()的流程。这时就会产生两个 uniqueInstance 对象。解决该问题，最简单的方法就是给getInstance()方法添加synchronized同步关键字。但是同步的开销你懂，是很大的。为了更好的解决饱汉式单例的线程安全问题，就该轮到 DCL 出场了。</p>
+<p><strong>Double CheckLock(DCL)实现单例</strong></p>
+<p>double-checked locking翻译过来就是双重检查加锁。该方式的优点是既能够在需要时才初始化单例，又能够保证线程安全，且单例对象初始化后调用getInstance不再进行同步锁。代码如下所示：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">volatile</span> <span class="keyword">static</span> Singleton uniqueInstance;</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(uniqueInstance == <span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="keyword">synchronized</span>(Singleton.class)&#123;</span><br><span class="line">                    <span class="keyword">if</span>(uniqueInstance == <span class="keyword">null</span>)&#123;</span><br><span class="line">                        uniqueInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                        &#125;</span><br><span class="line">                &#125;</span><br><span class="line">             &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> uniqueInstance;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure></p>
+<p>Tips:在 JDK1.5之前，DCL会存在失效问题问题。鉴于现在大家使用的JDK版本都是1.6+。所以该问题不展开来讲。DCL在线程安全上还是存在挺多争议，有兴趣的可以看看这篇文章：<a href="http://marlonyao.iteye.com/blog/875420" target="_blank" rel="external">Java 线程安全兼谈 DCL</a>。</p>
+<blockquote>
+<p>在简单的总结下 DCL ：<br>优点：资源利用率高，第一次执行getInstance时单例对象才会被实例化，效率高。<br>缺点：第一次加载时反应稍慢，也由于Java内存模型的原因偶尔会失败。在高并发环境下也有一定的缺陷，虽然发生概率很小。<br>DCL模式是使用最多的单例实现方式，它能够在需要时才实例化单例对象，并且能够在绝大多数情况下保证单例对象的唯一性，除非你的代码在并发场景比较复杂或者在低于JDK6版本下使用，否则，这种方式一般可以满足需求。</p>
+<font color="red">在《Java并发编程实践》一书最后谈到这个问题，并指出这种”优化”是丑陋的，不赞成使用，而建议使用静态内部类单例模式替代。</font>
+
+</blockquote>
+<p><strong>静态内部类单例模式</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.sInstance;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> class <span class="title">SingletonHolder</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> Singleton sInstance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们使用了Java的静态内部类，Singleton没有static的属性，因此并不会被初始化，直到调用getInstance()的时候，会首先加载 SingletonHolder类，该类有一个static的Singleton实例sInstance，因为会调用Singleton的构造方法，然后通过getInstance()把这个内部类的sInstance返回给使用者，由于sInstance是static的，因此不会构造多次。</p>
+<p>又因为SingletonHodler是私有静态内部类，所以不会被其他类知道，同样，static语义也要求不能有多个实例存在。并且，JSL 规范定义，类的构造函数必须是原子性的，非并发，因此无需添加同步块，同样，由于这个构造是并发的，所以getInstance()也不需要添加同步。</p>
+<p>所以，这种单例模式不仅是线程安全的，也能够保证单例对象的唯一性，同时也延迟了单例的实例化。《Effiective Java》一书也推荐了这种方式。</p>
+<p><strong>枚举单例</strong></p>
+<p>写法最简单的单例模式就是枚举，枚举在Java中与普通的类一样，不仅能够有字段，还能够有自己的方法，最重要的是默认的枚举实例的创建是线程安全的，并且在任何情况下它都是一个单例，为什么这么说呢，在上述的几种单例模式实现中，在一个情况下它们会出现重新创建对象的情况，那就是反序列化。</p>
+<p>通过反序列化可以将一个单例的实例对象写到磁盘，然后再读回来，从而有效的获得一个实例，即使构造函数是私有的，反序列化时依然可以通过特殊的途径去创建类的一个新的实例，相当于调用该类的构造函数。反序列化操作提供了一个很特别的钩子函数，readResolve(),这个方法可以让开发人员控制对象的反序列化，例如，上诉几个示例中如果要杜绝单例对象在被反序列化时重新生成对象那必须加入如下方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Object <span class="title">readResolve</span><span class="params">()</span> <span class="keyword">throws</span> ObjectStreamException</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>对于枚举，并不存在这个问题，因为即使反序列化它也不会重新生成新的实例。枚举单例这样写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> SingletonEnum&#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Syetem.out.println(<span class="string">"do sth."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>使用容器实现单例模式</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonManager</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, Object&gt; objMap = <span class="keyword">new</span> HashMap&lt;String,Object&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">registerService</span><span class="params">(String key, Object instance)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!objMap.containsKey(key))&#123;</span><br><span class="line">            objMap.put(key,instance);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title">getServices</span><span class="params">(String key)</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> objMap.get(key);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>用SingletonManager 将多种的单例类统一管理，在使用时根据key获取对象对应类型的对象。这种方式使得我们可以管理多种类型的单例，并且在使用时可以通过统一的接口进行获取操作，降低了用户的使用成本，也对用户隐藏了具体实现，降低了耦合度。</p>
+</blockquote>
+<p><strong>总结</strong><br>不管以上述哪种模式去实现单例模式，其核心的思想都是将构造函数私有化，并且通过静态方法获取一个唯一的单例，在这个获取的过程中我们必须保证线程安全，防止反序列化导致重新生成新的实例对象等问题。具体采用哪种实现方式，取决于项目本身。<font color="red"><del>个人推荐通过枚举方式去实现单例，代码简单，线程安全，反序列化保证实例对象唯一</del></font>。</p>
+<p><strong>关于枚举</strong><br>在 Android 官方的 Training课程里有下面这样一句话：</p>
+<blockquote>
+<p>Enums often require more than twice as much memory as static constants. You should strictly avoid using enums on Android.</p>
+</blockquote>
+<p><img src="http://hukai.me/images/android_perf_3_enum.png" alt="不建议使用枚举"></p>
+<p>关于enum的效率，请看下面的讨论。假设我们有这样一份代码，编译之后的dex大小是2556 bytes，在此基础之上，添加一些如下代码，这些代码使用普通static常量相关作为判断值：</p>
+<p><img src="http://hukai.me/images/android_perf_3_enum_static.png" alt="不建议使用枚举"></p>
+<p>增加上面那段代码之后，编译成dex的大小是2680 bytes，相比起之前的2556 bytes只增加124 bytes。假如换做使用enum，情况如下：</p>
+<p><img src="http://hukai.me/images/android_perf_3_enum_enum.png" alt="不建议使用枚举"></p>
+<p>使用enum之后的dex大小是4188 bytes，相比起2556增加了1632 bytes，增长量是使用static int的13倍。不仅仅如此，使用enum，运行时还会产生额外的内存占用，如下图所示：</p>
+<p><img src="http://hukai.me/images/android_perf_3_enum_memory.png" alt="不建议使用枚举"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://7xnk0a.com1.z0.glb.clouddn.com/23802445-1_w_1.jpg&quot; alt=&quot;此处输入图片的描述&quot;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;单例模式是应用最广的模式之一，也可能是很多初级工程师唯一会使用的
+    
+    </summary>
+    
+      <category term="设计模式" scheme="http://motalks.cn/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+    
+      <category term="单例模式" scheme="http://motalks.cn/tags/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/"/>
+    
+      <category term="设计模式" scheme="http://motalks.cn/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Android Studio常用快捷键总结（三）</title>
+    <link href="http://motalks.cn/2015/11/09/Android%20Studio%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E6%80%BB%E7%BB%93%EF%BC%88%E4%B8%89%EF%BC%89/"/>
+    <id>http://motalks.cn/2015/11/09/Android Studio常用快捷键总结（三）/</id>
+    <published>2015-11-09T10:16:58.000Z</published>
+    <updated>2015-11-09T10:25:38.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://www.android-studio.org/images/stories/android-studio-0628.jpg" alt="图片来自AndroidStudio中文社区"></p>
+<blockquote>
+<p>MoTalks:<br>从Eclipse到AndroidStudio，Windows到MacOS。这2次平台的搬迁，As的快捷键设置可让我好一通折腾，这两天终于有时间来整理总结下这些我平时常用快捷键的设置了，这次整理又让我发现了一些好用的快捷键。新技能get！话不多说，走起！</p>
+</blockquote>
+<p>首先说明文中快捷键在如下keymap生效：</p>
+<ul>
+<li>Windows: Default</li>
+<li>Linux: Default</li>
+<li>OSX: Mac OSX 10.5+</li>
+</ul>
+<hr>
+<p><strong>Analyze Data flow to Here</strong></p>
+<p>在阅读新的代码的时候比较有用，可以查到当前变量的值到改变量赋值时的调用路径。</p>
+<p>没有键盘快捷键，有2个方式使用：<br>Menu: Analyze → Analyze Data Flow to Here<br>Find action: Analyze Data Flow to Here</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks31-analyzedataflow.gif" alt="Analyze Data flow to Here"></p>
+<hr>
+<p><strong><font color="red">Sublime Text Multi Selection</font></strong></p>
+<p>键名：Add Selection for Next Occurrence<br>Mac : Ctrl+G       Windows/Linux: Alt+J</p>
+<p>神技能，多光标同时修改。这个比单纯的复制粘贴有bigger多了吧。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks32-multiselection.gif" alt="Multi Selection"></p>
+<hr>
+<p><strong><font color="red">Column Selection</font></strong></p>
+<p>键名：Column Selection Mode<br>Mouse: Alt+鼠标拖拽<br>Mac : Cmd+Shift+8<br>Windows/Linux: Shift+Alt+Insert</p>
+<p>列修改，选项多处要修改的地方，在XML文件修改比较好用。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks33-columnselection.gif" alt="Column Selection"></p>
+<hr>
+<p><strong>Postfix Completion</strong></p>
+<p>词尾补全功能，可以为变量自动添加for循环等。无快捷键，先打出你for循环要执行的对象，再.for即可。</p>
+<p>一些我个人爱用的功能：</p>
+<ul>
+<li>.for (for a foreach)</li>
+<li>.cast (wraps a statement in a type cast)</li>
+<li>.format (wraps a string in String.format())</li>
+</ul>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks33-postfixcompletion.gif" alt="Postfix Completion"></p>
+<hr>
+<p><strong><font color="red">Compare With Clipboard</font></strong></p>
+<p>和剪切板的内容做比较，也是神功能，尤其在对比代码的时候。先复制你要对比的内容，在选中你要对比的对象，再右键选择Compare With Clipboard即可。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks34-comparewithclipboard.gif" alt="Compare With Clipboard"></p>
+<hr>
+<p><strong>Stop Process</strong><br>键名：Stop<br>Mac : Cmd+F2     Windows/Linux: Ctrl+F2</p>
+<p>可以停止当前运行的任务，如果超过一个任务的话，会弹出一个列表让你选择要停止的任务。可以用来停止debug或者build。没什么卵用，点一下停止键不是更快。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks35-stoprocess.gif" alt="Stop"></p>
+<hr>
+<p><strong>Show Execution Point</strong></p>
+<p>键名：Show Execution Point<br>快捷键 (在debug时) : Alt+F10</p>
+<p>好用，在debug的时候，你一步一步的跳到了其他的方法里去了。这个时候怎么会到断点开始的地方？回退到上个光标点？太慢了！用这个一键直达！</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks36-executionpoint.gif" alt="Show Execution Point"></p>
+<hr>
+<p><strong>VCS Operations Popup</strong><br>键名：VCS Operations Popup<br>Mac: Ctrl+V      Windows/Linux: Alt+`</p>
+<p>显示你常用的VCS操作，提交更新，创建分支啥的，使用某些功能时可以省几个步骤。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks37-vcspopup.gif" alt="VCS Operations Popup"></p>
+<hr>
+<p><strong>Compare With Branch (Git)</strong><br>使用方式：<br>        Menu (for git): VCS -&gt; Git -&gt; Compare With Branch<br>        Find Actions: Compare With Branch</p>
+<p>如果你的项目是通过git来管理的话，这个功能可以让你本地当前的文件和另一个分支的文件做比较。好用！</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks38-comparewithbranch.gif" alt="Compare With Branch"></p>
+<hr>
+<p>本文翻译自：<a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-4/" target="_blank" rel="external">http://www.developerphil.com/android-studio-tips-of-the-day-roundup-4/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://www.android-studio.org/images/stories/android-studio-0628.jpg&quot; alt=&quot;图片来自AndroidStudio中文社区&quot;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;MoTalks:
+    
+    </summary>
+    
+      <category term="开发工具（DevTools）" scheme="http://motalks.cn/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7%EF%BC%88DevTools%EF%BC%89/"/>
+    
+    
+      <category term="AndroidStudioTips" scheme="http://motalks.cn/tags/AndroidStudioTips/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Android Studio常用快捷键总结（二）</title>
+    <link href="http://motalks.cn/2015/11/01/Android%20Studio%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E6%80%BB%E7%BB%93%EF%BC%88%E4%BA%8C%EF%BC%89/"/>
+    <id>http://motalks.cn/2015/11/01/Android Studio常用快捷键总结（二）/</id>
+    <published>2015-11-01T04:58:58.000Z</published>
+    <updated>2015-11-01T06:00:30.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://www.android-studio.org/images/stories/android-studio-0628.jpg" alt="图片来自AndroidStudio中文社区"></p>
+<blockquote>
+<p>MoTalks:<br>从Eclipse到AndroidStudio，Windows到MacOS。这2次平台的搬迁，As的快捷键设置可让我好一通折腾，这两天终于有时间来整理总结下这些我平时常用快捷键的设置了，这次整理又让我发现了一些好用的快捷键。新技能get！话不多说，走起！</p>
+</blockquote>
+<p>首先说明文中快捷键在如下keymap生效：</p>
+<ul>
+<li>Windows: Default</li>
+<li>Linux: Default</li>
+<li>OSX: Mac OSX 10.5+</li>
+</ul>
+<hr>
+<p><strong>Toggle Breakpoints</strong></p>
+<p>KeyMap键名：Toggle Line Breakpoint<br>Mac cmd+F8(fn)  Win/Linux ctrl+F8<br>添加断点，和鼠标左键的效果一样，个人感觉没多大用处，除非你鼠标和触摸板坏了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks21-togglebreakpoints.gif" alt="Toggle Line Breakpoint"></p>
+<p><strong>Conditional Breakpoints</strong></p>
+<p>条件断点，直接右键断点，可以为断点添加一个条件，只有符合条件的时候才会进入断点。在for循环或者各种循环里使用，爽歪歪的。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks22-conditionalbreakpoint.gif" alt="条件断点"></p>
+<p><strong>Logging Breakpoints</strong></p>
+<p>打印断点信息。也是在各种循环里各种好用。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks23-loggingbreakpoints.gif" alt="Logging Breakpoints"></p>
+<p><strong>Temporary Breakpoints</strong></p>
+<p>KeyMap键名：Toggle Temporary Line Breakpoint<br>Mac Cmd+Alt+Shift+F8(fn)<br>Win/Linux Ctrl+Alt+Shift+F8<br>Mouse：Alt + 左键</p>
+<p>临时断点，进入断点一次后会自动取消断点。这快捷键估计处女座用的比较多，见不得程序到处都是断点。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks24-temporarybreakpoints.gif" alt="Temporary Breakpoints"></p>
+<p><strong>Disable Breakpoints</strong></p>
+<p>让一个断点失效，使用情景：现在不需要，但是你又不想下次需要的时候再创建它。没有默认的快捷键，但是你需要经常使用的话，可以自己自定义下，根据KeyMap键名搜索。</p>
+<p>Mosue: Alt+左键（在已存在的断点上点击）<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks25-disablebreakpoint.gif" alt="Disable Breakpoints"></p>
+<p><strong>Attach Debugger</strong></p>
+<p>选择你要的进程进入debug模式，不用像我傻傻的每次去点那个小虫子了。没有默认的快捷键，可以自己创建。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks26-attachdebugger.gif" alt="Attach Debugger"></p>
+<p><strong>Evaluate Expression</strong></p>
+<p>快捷键：Alt+F8<br>debug时查看各变量的值，对比在debug工具栏观察，这个时效更长，用的比较少。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks27-evaluateexpression.gif" alt="Evaluate Expression"></p>
+<p><strong>Inspect Variable</strong></p>
+<p>Mouse: Alt+左键（在断点执行时）<br>查看各变量的值，比上一个快捷键更加直观好用。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks28-mouse_evaluate_expression.gif" alt="Inspect Variable"></p>
+<p><strong>Mark Object</strong></p>
+<p>快捷键：<br>Mouse: 右键选择”Mark Object”<br>Mac: F3（在选择的对象上）<br>Windows/Linux: F11（在选择的对象上）</p>
+<p>给对象做标记。例如在一个数组里给某个对象做了标记，下次出现在调试台信息里面就会已标记名出现，而不是已数组下标表示。</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks29-markobject.gif" alt="Mark Object"></p>
+<p><strong>Analyze Stacktrace</strong></p>
+<p>没有对应的快捷键，两个方式进入Analyze Stacktrace<br>Menu: Analyze → Analyze Stacktrace<br>Find action: analyze stacktrace</p>
+<p>分析堆栈信息<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks30-analyzestacktrace.gif" alt="Analyze Stacktrace"></p>
+<p>本文翻译自：<a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-3/" target="_blank" rel="external">http://www.developerphil.com/android-studio-tips-of-the-day-roundup-3/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://www.android-studio.org/images/stories/android-studio-0628.jpg&quot; alt=&quot;图片来自AndroidStudio中文社区&quot;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;MoTalks:
+    
+    </summary>
+    
+      <category term="开发工具（DevTools）" scheme="http://motalks.cn/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7%EF%BC%88DevTools%EF%BC%89/"/>
+    
+    
+      <category term="AndroidStudioTips" scheme="http://motalks.cn/tags/AndroidStudioTips/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Android Studio常用快捷键总结（一）</title>
+    <link href="http://motalks.cn/2015/10/24/Android%20Studio%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E6%80%BB%E7%BB%93%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>http://motalks.cn/2015/10/24/Android Studio常用快捷键总结（一）/</id>
+    <published>2015-10-24T14:43:18.000Z</published>
+    <updated>2015-10-24T14:43:48.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://www.android-studio.org/images/stories/android-studio-0628.jpg" alt="图片来自AndroidStudio中文社区"></p>
+<blockquote>
+<p>MoTalks:<br>从Eclipse到AndroidStudio，Windows到MacOS。这2次平台的搬迁，As的快捷键设置可让我好一通折腾，这两天终于有时间来整理总结下这些我平时常用快捷键的设置了，这次整理又让我发现了一些好用的快捷键。新技能get！话不多说，走起！</p>
+</blockquote>
+<p>首先说明文中快捷键在如下keymap生效：</p>
+<ul>
+<li>Windows: Default</li>
+<li>Linux: Default</li>
+<li>OSX: Mac OSX 10.5+</li>
+</ul>
+<hr>
+<p><strong>The File Structure Popup</strong></p>
+<p>KeyMap键名：File Structure<br>Mac cmd+F12(配合fn)  Win/Linux ctrl+F12<br>此快捷键可以调出当前文件的大纲，并且可以通过模糊匹配来快速跳转到指定方法。适合场景：快速跳转到一个你已知名字的方法的位置。类似原eclipse快捷键Ctrl+o，我已自定义该快捷键为Ctrl+o。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks03-filestructure.gif" alt="File Structure"></p>
+<p><strong>The Call Hierarchy Popup</strong></p>
+<p>KeyMap键名：Call Hierarchy<br>Mac ctrl+alt+h  Win/Linux ctrl+alt+h<br>查看某个方法被调用的路径<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks04-callinghierarchy.gif" alt="Call Hierarchy"></p>
+<p><strong>Quick Definition Lookup</strong></p>
+<p>KeyMap键名：Quick Definition<br>Mac alt(fn)+space/cmd+y  Win/Linux ctrl+shift+i<br>在当前文件下快速查看某个方法或者类的实现。在阅读代码梳理逻辑的时候比较好用，不用在不同类中不停的切换了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks05-quickdefinition.gif" alt="Quick Definition"></p>
+<p><strong>Collapse Expand Code Block</strong></p>
+<p>KeyMap键名：Collapse 和 Expand<br>Mac cmd+plus/minus  Win/Linux ctrl+shift+plus/minus</p>
+<blockquote>
+<p>MoTalks：原文Mac下的快捷键是alt+plus/minus,和我本地默认的Mac OSX 10.5+配置不同，如果你的快捷键不生效，可以按键名查找对应的快捷键，下文不再另作说明)</p>
+</blockquote>
+<p>此快捷键可以快速展开和收起一个方法。同样，在阅读代码梳理逻辑的时候比较好用。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks06-codefolding.gif" alt="Collapse Expand Code"></p>
+<p><strong>Bookmarks!</strong></p>
+<p>KeyMap键名：Toggle Bookmark<br>Mac F3  Win/Linux F11<br>添加或取消书签。</p>
+<p>KeyMap键名：Toggle Bookmark With Mnemonic<br>Mac alt+F3  Win/Linux ctrl+F11<br>给书签添加数字，Ctrl+数字可以快速回到书签位置。有木有想到游戏里的技能快捷键。是不是很赞！<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksToggleBookmarkWithMnemonic.png" alt="Toggle Bookmark With Mnemonic"></p>
+<p>KeyMap键名：Show Bookmarks<br>Mac cmd+F3  Win/Linux shift+F11<br>显示所有的书签<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks07-bookmarks.gif" alt="此处输入图片的描述"></p>
+<p><strong>Find Actions</strong></p>
+<p>KeyMap键名：Find Actions<br>Mac cmd+shift+a  Win/Linux ctrl+shift+a<br>可以模糊匹配所有Android Studio可以执行的命令。<br>比如输入rebuild就会出现Rebuild Project的选项，点击即可执行该操作。当你只记得命令找到它在哪里的时候，这快捷键是不是神技能救你于水火之中。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks08-findaction.gif" alt="此处输入图片的描述"></p>
+<p><strong>Move Lines Up/Down</strong></p>
+<p>KeyMap键名：Move Lines Up/Down<br>Mac alt+shift+up/down  Win/Linux alt+shift+up/down<br>将当前行或者选中代码块向上或者向下移动。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks09-movelines.gif" alt="Move Lines Up/Down"></p>
+<p><strong>Move Methods</strong></p>
+<p>KeyMap键名：Move Statement<br>Mac cmd+shift+up/down Win/Linux ctrl+shift+up/down<br>和移动行类似，这个是移动整个函数。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks15-movemethods.gif" alt="Move Methods"></p>
+<p><strong>Delete Line</strong></p>
+<p>KeyMap键名：Delete Line<br>Mac cmd+backspace  Win/Linux ctrl+y<br>同原eclipse的Ctrl+D。很常用的快捷键，没啥说的。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks10-deleteline.gif" alt="Delete Line"></p>
+<p><strong>Duplicate Lines</strong></p>
+<p>KeyMap键名：Delete Line<br>Mac cmd+d   Win/Linux ctrl+d<br>复制行，没啥说的。写对象属性的时候经常用到。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks11-duplicate_lines.gif" alt="Duplicate Lines"></p>
+<p><strong>Surround with</strong></p>
+<p>KeyMap键名：Surround with<br>Mac cmd+alt+t   Win/Linux ctrl+alt+t<br>会将你选择的代码块用你选择的函数包裹起来。如if/else,try/catch等，如果没选择代码的话会将当前行包括进去。效率又提高了有木有！炒鸡好用！<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks13-surround_with.gif" alt="Surround with"></p>
+<p><strong>Recents</strong></p>
+<p>KeyMap键名：Recent Files<br>Mac cmd+e   Win/Linux ctrl+e<br>终于找到你啦，一直就再想什么时候能有和浏览器一样的最近打开的标签的功能。原来早就有这个功能没发现。这样不小心关闭一个类，就不用到处去找啦，又省不少时间，炸裂啊！<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks14-recents.gif" alt="Recents"></p>
+<p><strong>Live Templates</strong></p>
+<p>KeyMap键名：insert live templates<br>Mac cmd+j  Win/Linux ctrl+j<br>快速生成模板代码，比如要写个if(some == null){}这类型的代码<br>只要写下if按下快捷键。就会弹出各种匹配的选项，选择ifn就可以生成上面这个代码。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks15-live_templates.gif" alt="Live Templates"></p>
+<p><strong>Complete Statement</strong></p>
+<p>KeyMap键名：insert live templates<br>Mac cmd+shift+enter  Win/Linux ctrl+shift+enter<br>比较AS自动提示的完成的代码E.g. if()，使用这个快捷键会生成更完整的代码块。如：if(){}。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks16-completestatement.gif" alt="此处输入图片的描述"></p>
+<p><strong>Last Edit Location</strong></p>
+<p>KeyMap键名：Last Edit Location<br>Mac cmd+shift+backspace  Win/Linux ctrl+shift+backspace<br>回退到上个编辑光标处。在几个Activity调试的时候很好用。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks17-navigate-previous-changes.gif" alt="Last Edit Location"></p>
+<p><strong>Join Lines and Literals</strong></p>
+<p>KeyMap键名：Join Lines<br>Mac cmd+shift+j  Win/Linux ctrl+shift+j<br>也是第一次知道这功能，好腻害的样子，可以合并2行之间的空白，如果两行代码有关联，还可以帮你优化下。如果两行注释要合并的话会自动去掉多余的//。这个快捷键可以装的一手好B了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks18-joinlines.gif" alt="Join Lines"></p>
+<p><strong>Select In</strong></p>
+<p>KeyMap键名：Select In…<br>Mac alt+f1 Win/Linux alt+f1<br>在当前类使用这个快捷键可以快速在文件夹中找到这个类文件。还有其他选项大家可以摸索下。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks19-select-in.gif" alt="Select In"></p>
+<p><strong>Unwrap/Remove</strong></p>
+<p>KeyMap键名：Unwrap/Remove<br>Mac cmd+shift+delete(fn)  Win/Linux ctrl+shift+delete<br>选择代码，使用快捷键会识别出代码当中使用的代码模板（如try/catch，if()之类的）选择后就会自动帮你去除该代码模板。终于不用自己在复杂的代码中删除代码时去对一堆的括号了。<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks20-unwrap.gif" alt="Unwrap/Remove"></p>
+<blockquote>
+<p>MoTalks:花了一晚上，才搬运翻译了这些。国外的大大还要制作动图，真的是花心思啊。看看国内就没有一个能把快捷键教程做的这么精细的。大赞，这么只翻译了前2篇的内容。总共有6篇。今后会继续搬运回来。文末会附上链接，等不及的可以直接去看啦。</p>
+</blockquote>
+<p>本文翻译自：<br><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/" target="_blank" rel="external">http://www.developerphil.com/android-studio-tips-of-the-day-roundup-1/</a><br><a href="http://www.developerphil.com/android-studio-tips-of-the-day-roundup-2/" target="_blank" rel="external">http://www.developerphil.com/android-studio-tips-of-the-day-roundup-2/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://www.android-studio.org/images/stories/android-studio-0628.jpg&quot; alt=&quot;图片来自AndroidStudio中文社区&quot;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;MoTalks:
+    
+    </summary>
+    
+      <category term="开发工具（DevTools）" scheme="http://motalks.cn/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7%EF%BC%88DevTools%EF%BC%89/"/>
+    
+    
+      <category term="AndroidStudioTips" scheme="http://motalks.cn/tags/AndroidStudioTips/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hexo搭建博客系列：给博客添加百度统计</title>
+    <link href="http://motalks.cn/2015/10/17/Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E7%B3%BB%E5%88%97%EF%BC%9A%E7%BB%99%E5%8D%9A%E5%AE%A2%E6%B7%BB%E5%8A%A0%E7%99%BE%E5%BA%A6%E7%BB%9F%E8%AE%A1/"/>
+    <id>http://motalks.cn/2015/10/17/Hexo搭建博客系列：给博客添加百度统计/</id>
+    <published>2015-10-17T15:55:18.000Z</published>
+    <updated>2015-10-17T16:32:23.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" alt="此处输入图片的描述"><br>　这篇教程也是基于tranquilpeak主题的。废话不多说，给你的博客添加百度统计，步骤如下。<br>　首先在<a href="http://tongji.baidu.com/web/welcome/login" target="_blank" rel="external">百度统计</a>注册个帐号。选择注册百度统计站长版即可，如图一。<br>　<img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-1@2x.png" alt="此处输入图片的描述"><br>　注册登录后，选择网站中心，点击右上角的新增网站，输入网站地址，名称后，行业类别后，即可以点击获取代码，如图二。<br>　<img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-2@2x.png" alt="此处输入图片的描述"><br>　复制代码后按照提供的安装攻略第二条建议操作，如图三。<br>　<img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-5@2x.png" alt="此处输入图片的描述"><br>　在<font color="red">themes/tranquilpeak/layout/_partial/head.ejs</font>模板文件中，将先前复制的代码复制在标签前，如图四<br><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksQQ20151018-4@2x.png" alt="此处输入图片的描述"><br>　最后，在回到图二界面，点击网站代码检查，看到显示代码安装即可。等待２０分钟左右点击图一的报告页卡即可观察到各种访问数据。</p>
+<blockquote>
+<p>MoTalks:<br>　　添加统计功能对于专注于知识经验分享的个人博客似乎是可有可无的，可能是原来做草根站长留下的职业病吧。那时候要根据百度统计的数据来分析网站的关键词流量，跳出率，停留时间等等来做SEO优化，一个网站没有统计是不完整的。现在对这个个人博客来说，会评论的人不多，看看这些后台数据，也算是对自己的坚持一种鼓励吧。^-^</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg&quot; alt=&quot;此处输入图片的描述&quot;&gt;&lt;br&gt;　这篇教程也是基于tranquilpeak主题的。废话不多说，给你的博客添加百度统计，步骤如下。&lt;b
+    
+    </summary>
+    
+      <category term="博客搭建" scheme="http://motalks.cn/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+    
+    
+      <category term="hexo" scheme="http://motalks.cn/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hexo搭建博客系列：tranquilpeak主题接入多说评论</title>
+    <link href="http://motalks.cn/2015/10/17/Hexo%E6%90%AD%E5%BB%BA%E5%8D%9A%E5%AE%A2%E7%B3%BB%E5%88%97%EF%BC%9Atranquilpeak%E4%B8%BB%E9%A2%98%E6%8E%A5%E5%85%A5%E5%A4%9A%E8%AF%B4%E8%AF%84%E8%AE%BA/"/>
+    <id>http://motalks.cn/2015/10/17/Hexo搭建博客系列：tranquilpeak主题接入多说评论/</id>
+    <published>2015-10-17T08:10:00.000Z</published>
+    <updated>2015-10-17T10:54:53.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg" alt="此处输入图片的描述"></p>
+<p>　　Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网站，所以大多数用hexo搭建博客的都是使用多说评论，更符合我们的国情。<br>　　<br>　　多说的网友也提供了<a href="http://dev.duoshuo.com/threads/541d3b2b40b5abcd2e4df0e9" target="_blank" rel="external">教程</a>，不过是针对Hexo默认主题landscape的。对于我现在使用的tranquilpeak主题不太适用。<br>　　<br>　　tranquilpeak主题接入多说教程如下：首先在Hexo的<font color="red">_config.yml</font>中添加多说的配置：<br>　　<code>duoshuo_shortname: 你站点的short_name</code><br>　　<br>   再修改<font color="red">themes\tranquilpeak\layout\partial\post.ejs</font>模板文件。找到这段代码：<br>    　　<code>&lt;% if (post.comments &amp;&amp; theme.disqus_shortname) 
+            { %&gt;　　 
+           &lt;%- partial(&#39;post/disqus&#39;) %&gt;
+        　　&lt;% } %&gt;</code><br>        　　　<br>   替换为</p>
+<pre><code><span class="comment"><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">%</span> <span class="attribute">if</span> (<span class="attribute">post.comments</span> &amp;&amp; <span class="attribute">config.duoshuo_shortname</span>)&#123; %&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">section</span> <span class="attribute">id</span>=<span class="value">"comments"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说评论框 start --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"ds-thread"</span> <span class="attribute">data-thread-key</span>=<span class="value">"&lt;%= post.layout %&gt;-&lt;%= post.slug %&gt;"</span> <span class="attribute">data-title</span>=<span class="value">"&lt;%= post.title %&gt;"</span> <span class="attribute">data-url</span>=<span class="value">"&lt;%= page.permalink %&gt;"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说评论框 end --&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说公共JS代码 start (一个网页只需插入一次) --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript"></span><br><span class="line"><span class="keyword">var</span> duoshuoQuery = &#123;short_name:<span class="string">'&lt;%= config.duoshuo_shortname %&gt;'</span>&#125;;</span><br><span class="line">  (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ds = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>);</span><br><span class="line">    ds.type = <span class="string">'text/javascript'</span>;ds.async = <span class="literal">true</span>;</span><br><span class="line">    ds.src = (<span class="built_in">document</span>.location.protocol == <span class="string">'https:'</span> ? <span class="string">'https:'</span> : <span class="string">'http:'</span>) + <span class="string">'//static.duoshuo.com/embed.js'</span>;</span><br><span class="line">    ds.charset = <span class="string">'UTF-8'</span>;</span><br><span class="line">    (<span class="built_in">document</span>.getElementsByTagName(<span class="string">'head'</span>)[<span class="number">0</span>] </span><br><span class="line">     || <span class="built_in">document</span>.getElementsByTagName(<span class="string">'body'</span>)[<span class="number">0</span>]).appendChild(ds);</span><br><span class="line">  &#125;)();</span><br><span class="line">  </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 多说公共JS代码 end --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">section</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">%</span> &#125; %&gt;</span></span><br></pre></td></tr></table></figure></span>
+</code></pre><blockquote>
+<p>MoTalks: 对于其他主题，可以和我用一样的逻辑去找到相应的代码进行修改。因为多说评论模块肯定是用在文章页面的。所以一般在文章样式的模板页就可以找到相应的代码，很简单吧。不过替换的过程中也遇到过问题。就是直接复制上面代码进行替换后部署报错：<font color="red">Unhandled rejection ReferenceError:/themes/tranquilpeak/layout/_partial/post.ejs:46  &gt;&gt; 46|        &lt;% if (!index &amp;&amp; post.comments &amp;&amp; config.duoshuo_shortname){ %&gt; </font><br>简单分析后，尝试去掉判断条件中的!index 就可以了。不熟悉landscape主题和tranquilpeak主题的代码区别，没确认具体原因，有知道的可以告知下。</p>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://7xnk0a.com1.z0.glb.clouddn.com/motalksbanner.jpg&quot; alt=&quot;此处输入图片的描述&quot;&gt;&lt;/p&gt;
+&lt;p&gt;　　Hexo自带的评论插件Disqus，评论分享什么的都是到FB，Twitter等不存在的网
+    
+    </summary>
+    
+      <category term="博客搭建" scheme="http://motalks.cn/categories/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/"/>
+    
+    
+      <category term="hexo" scheme="http://motalks.cn/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>你是想读书，还是想读完书(二)？</title>
+    <link href="http://motalks.cn/2015/10/15/%E4%BD%A0%E6%98%AF%E6%83%B3%E8%AF%BB%E4%B9%A6%EF%BC%8C%E8%BF%98%E6%98%AF%E6%83%B3%E8%AF%BB%E5%AE%8C%E4%B9%A6%EF%BC%88%E4%BA%8C%EF%BC%89%EF%BC%9F/"/>
+    <id>http://motalks.cn/2015/10/15/你是想读书，还是想读完书（二）？/</id>
+    <published>2015-10-15T14:53:54.000Z</published>
+    <updated>2015-10-17T09:36:37.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/motalks2015-09-08-anthonydelanoix-002.jpg" alt="此处输入图片的描述"></p>
+<blockquote>
+<p>读不懂并不妨碍读完 </p>
+</blockquote>
+<p>长期以来，我最自得的本领之一就是读书的时候，即便读不懂都能读得完——这几乎是最重要的本领，尤其是在应对系统复杂的知识技能的时候。</p>
+<p>这不是谁教我的，但我就那么会了。不过，想想看，应该很早就有人意识到这个本领的重要性了罢——要不怎么会有古人留下训诫呢，虽然只有泛泛的一句：『读书千遍其义自见』。</p>
+<p>讲述复杂知识的书籍，常常骨子里是『类递归结构』——若想深入理解前面出现的概念，需要深入理解后面的概念才行……换句话讲，真正深入理解第一章，往往要在第五章之后才能做到。</p>
+<p>于是，那些有一点点看不懂就放弃，或有一点点弄不明白就驻足不前就会暗里吃亏——因为其无论是谁都在没有走到一定程度之前是不可能彻底领悟的。</p>
+<p>于是，我这种人就占了便宜，因为我们读书的时候，兴致勃勃，哪怕读不懂也不会削减兴趣，而读着读着便恍然大悟已经成了高潮体验的特定场景，甚至在很多的时候，遇到读不懂的地方，反倒产生了对未来高潮的预期……</p>
+<p>遇到读不懂的地方，做个标记就好，继续下去，无论怎样都要读完。一个人有多少智慧，常常可以从他能够忍受多少未知判断出来。带着未知走向终点的过程中，你会发现很多的结可能自然而然地解开了……其实真的用不着读一千遍（古人读一千遍，更可能是那个时候全世界的书也不过那么几本而已），三五遍已经是最多了。</p>
+<blockquote>
+<p>MoTalks:<br>　　这篇文章看到也很久了，初次看到『读不懂并不妨碍读完 』这句话时，有点诧异。毕竟因为很多书籍看不下去就是因为看不懂而产生了烦躁的情况，阅读却是需要以安静的心态进行。<br>　　再看到『一个人有多少智慧，常常可以从他能够忍受多少未知判断出来。』这句话，我就感觉到深深的恶意。大部分喜欢读书的人手头都有很多因为读不懂而放弃的书，这篇文章又提供了另外一个角度来引导你进入一种阅读的flow状态。<br>　　希望大家能和原作者一样慢慢培养起『遇到读不懂的地方，反倒产生了对未来高潮的预期……』</p>
+</blockquote>
+<p><em>原文转自：<a href="http://xiaolai.li/post/107405631535" target="_blank" rel="external">http://xiaolai.li/post/107405631535</a></em></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://7xnk0a.com1.z0.glb.clouddn.com/motalks2015-09-08-anthonydelanoix-002.jpg&quot; alt=&quot;此处输入图片的描述&quot;&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;读不懂并不妨碍读完
+    
+    </summary>
+    
+      <category term="读书" scheme="http://motalks.cn/categories/%E8%AF%BB%E4%B9%A6/"/>
+    
+    
+      <category term="读书" scheme="http://motalks.cn/tags/%E8%AF%BB%E4%B9%A6/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>你是想读书，还是想读完书？</title>
+    <link href="http://motalks.cn/2015/10/14/%E4%BD%A0%E6%98%AF%E6%83%B3%E8%AF%BB%E4%B9%A6%EF%BC%8C%E8%BF%98%E6%98%AF%E6%83%B3%E8%AF%BB%E5%AE%8C%E4%B9%A6%EF%BC%9F/"/>
+    <id>http://motalks.cn/2015/10/14/你是想读书，还是想读完书？/</id>
+    <published>2015-10-13T16:48:58.000Z</published>
+    <updated>2015-10-17T09:36:54.000Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="http://77fmso.com1.z0.glb.clouddn.com/2015-10-06-abigailkeenan-004.jpg" alt="此处输入图片的描述" title="running on hill"></p>
+<blockquote>
+<p>   这是转自豆瓣一篇小感悟，感同身受。同时对他说的禅宗思想产生了一种莫名的兴趣，也许这和我以前感官认知的奶奶的宗教，有本质的不同，不再是求佛保平安，求发财。这一部分禅宗思想，让我大受裨益。“正念”，我亦非常欣赏！</p>
+</blockquote>
+<p>  以前，读书前会很想读一本书，但实际读书时，经常是“想读完书”，而不是“想读书”这种想法经常会让我的生活变得很痛苦，当你做一件事想着快点做完时，你的心思其实已经不在这件事上了。</p>
+<p>  这个问题在我大学时困扰了我很久。我没有意识到这本身其实是一个价值观问题，以至于我常在一些时间管理的书中寻找答案。那些书都只能让你更高效地“做完事”，却不能让你在做的过程中更投入一分。</p>
+<p>  直到后来离开学校，了解了一小部分禅宗思想，我开始豁然开朗。禅宗讲求摒除心中的杂质，全部精神专注于当下，摒弃过去摒弃未来，任何的多余的念头都可能使你正在做的事情不纯粹。禅宗上，这叫“正念”，我非常非常欣赏。</p>
+<p>  想想看，你去旅行，那你是为了旅行和生活本身呢，还是为了旅行回来能增加一点谈资、写一篇游记呢？答案是显然的。</p>
+<p>  人生也是一样，如果你一心只等着功成名就家财万贯衣食无忧的那一天，就好像你旅游时只等着回去写游记和炫耀一样，旅行本身就失去了意义。</p>
+<p>  生活就像这样的旅行，我们今天读的每一本书，写的每一个字，迈的每一个步，做的每一件事，就是这趟旅行的一部分。如果我们不能专注于它本身并享受这种过程，那整个生活就会变成急不可耐的煎熬。</p>
+<p>  回到读书上来，现在我觉得对书的“量”的追求是完全无意义的。如果我在读一本书时专注于其中，不仅可以获得远比匆匆翻过更深入的东西，而且还能为人生增加不曾虚度的有趣有意义的几天或几小时。</p>
+<p>  对了，在很多领域都有一个词叫“flow”，描述人们沉浸在某事中获得的愉悦状态，根据我粗浅通俗的理解，禅宗正念的目标，就是把这种状态扩展延伸到你生命的每一秒。</p>
+<blockquote>
+<p>MoTalks: 读书不需要量化，以前我也爱每天读多少页来要求自己，但是现在看来，有点为了读书而读书了。你真正喜爱的书，正如上文所说的，你会进入一个“flow”的状态，你会沉静其中，并得到快乐。有些书，需要走心。下面这位老师说的很好“一旦用“页数”为单位来度量读书这种行为，从一开始你就错了。”，但是有些书，特别是对我来说，一些CS方面的书籍，我更不该追求的读完它，也不应为了今后为了炫耀，向别人说自己读了多少书。这些书籍，应该通读加精读，浏览了大概内容，在你遇到问题时，再去精读，仔细揣摩，去真正的掌握。读书，读一本好书，方法。如是而已。</p>
+</blockquote>
+<p>  大学时，一位很有才华的心理学老师说过的一句话，让我终身难忘：“很多同学喜欢说自己一天能读多少页的书，有些人一天能读50页，有些人能读100页。可是一旦你用‘页数’为单位来度量读书这种行为时，从一开始你就错了。”</p>
+<p>  同理，如果你用读了多少本书来形容你的读书经历，这种思路，从一开始就错了。</p>
+<p>  如果你认真读到了书里去，是不会care、甚至会完全忽略掉今天读了多少页，今年读了多少本的；当你沉迷于书中绚烂多彩的世界，当你的观念被翻天覆地地革新，是不会care、甚至会完全忽略掉今天读了多少页，今年读了多少本的。</p>
+<p>  当我们看手表的时候，常是快等不及了；当我们数书页的时候，常是快看不下去了；当我们念叨看了几本书的时候，常是连书名都记不全了。所以，数多少页、多少本这行为本身，就说明你已经败了。</p>
+<p>  很多时候，一个人对待知识和思想的态度，就体现在用什么东西去丈量它。</p>
+<p>  如果有人问一位读书而有大成之人：你因何而脱胎换骨？你因何而涅磐重生？这些问题，他该如何作答？他说：”我因200本书而脱胎换骨，我因1000本书而涅磐重生“，如何？</p>
+<p>  阅读是一种享受，但如果读完一本书，没有新的体验，完全不同的视角和观点、不能对你的思维有所改变、特别是读完一本好书之后，想不清楚、说不清楚、写不清楚、也从来没有行动过，那你看书是在浪费时间。</p>
+<p>  学而悟道，有时候一本书就够了，有时候一万本都不够。这取决于，你读了什么书，更重要的是，你是如何读的：你有没有读进去把自己活埋在里面，又有没有读出来敲打出一个新的自己。</p>
+<p>  有些书，是一代宗师级的人物，把他们毕生的智慧熔铸在一本书里面；有些书，是一个领域的开疆拓土之作，从一片混沌中劈出一个新世界；有些书，是一个领域的集大成之作，观点纷繁，气象万千；有些书，如盗梦空间一般有几层境界，你多读一遍就多梦到一层。对这些书，你若只是都当成那两百分之一，花上一个星期匆匆读完，读后即扔，只摘下几条金句供日后泡妞之用，难道这就算读过了吗？</p>
+<p>  有些书，要用心血去读；有些书，要用足够的经历去读；有些书，是要绞尽最后一粒脑细胞去读；有些书，是一辈子都读不完读不透……</p>
+<p>  看书的方法，不仅要看作者写了什么（一层），还要琢磨文字背后的意蕴，那些弦外之音（二层），还要去思考作者为什么要写这些、要这样写（三层），还要去想想 看作者用了什么样的框架和策略在组织这本书，以及在各种细微处又用了什么样的方法和技巧（四层），当然更重要的是，以上的这些分析对你自己的现实和精神世 界能带来什么样的帮助，是否能启发你、引导你、改变你……（五层）</p>
+<p>  于是，一本值得都烂读透的书，就需要你去读五遍、十遍去读烂读透它。</p>
+<p>  于是乎，和很多人的答案相反：所谓200本，你不是读少了，而是读多了、读水了、读浅了</p>
+<p>  其实你的状态一点都不特殊，你和许多人一样，以为自己在读书，其实是在集邮。</p>
+<p>  最后，建议你重新拿起一本你最崇敬的书，换一种方式，再读一遍、两遍、三遍……</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;img src=&quot;http://77fmso.com1.z0.glb.clouddn.com/2015-10-06-abigailkeenan-004.jpg&quot; alt=&quot;此处输入图片的描述&quot; title=&quot;running on hill&quot;&gt;&lt;/p&gt;
+&lt;blockquot
+    
+    </summary>
+    
+      <category term="读书" scheme="http://motalks.cn/categories/%E8%AF%BB%E4%B9%A6/"/>
+    
+    
+      <category term="读书" scheme="http://motalks.cn/tags/%E8%AF%BB%E4%B9%A6/"/>
+    
+  </entry>
+  
+</feed>
