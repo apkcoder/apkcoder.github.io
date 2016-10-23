@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://motalks.cn/"/>
-  <updated>2016-10-23T14:24:54.000Z</updated>
+  <updated>2016-10-23T14:44:55.000Z</updated>
   <id>http://motalks.cn/</id>
   
   <author>
@@ -20,10 +20,9 @@
     <link href="http://motalks.cn/2016/10/23/React_Native_Development_Environment/"/>
     <id>http://motalks.cn/2016/10/23/React_Native_Development_Environment/</id>
     <published>2016-10-23T14:18:18.000Z</published>
-    <updated>2016-10-23T14:24:54.000Z</updated>
+    <updated>2016-10-23T14:44:55.000Z</updated>
     
-    <content type="html"><![CDATA[<p>### </p>
-<blockquote>
+    <content type="html"><![CDATA[<blockquote>
 <p>自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文受用的对象是使用 Mac 以及真机调试的 Android 开发人员。最好确保你有个健全的网络（你懂的）。</p>
 </blockquote>
 <h4 id="Homebrew">Homebrew</h4><p>号称是 MacOS 不可或缺的套件管理器，反正就是你可以用它来下载安装 Node.js , React Native 命令行工具的工具。Homebrew 的中文介绍点<a href="http://brew.sh/index_zh-cn.html" target="_blank" rel="external">这里</a>。打开 Mac 终端，输入如下命令安装：</p>
@@ -87,9 +86,8 @@
     
     <summary type="html">
     
-      &lt;p&gt;### &lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简
+      &lt;blockquote&gt;
+&lt;p&gt;自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文受用的对象是使
     
     </summary>
     
