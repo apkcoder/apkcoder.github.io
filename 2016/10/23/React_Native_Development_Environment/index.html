@@ -86,22 +86,28 @@
 
 
 
-<meta name="description" content="自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文受用的对象是使用 Mac 以及真机调试的 Android 开发人员。最好确保你有个健全的网络（你懂的）。
+<meta name="description" content="本文来自：
+http://motalks.cn/2016/10/23/React_Native_Development_Environment/
+转载请注明来源。
 
-Homebrew号称是 MacOS 不可或缺的套件管理器，">
+自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React Native  Android 开发环境搭建，只需4步。">
 <meta property="og:url" content="http://motalks.cn/2016/10/23/React_Native_Development_Environment/index.html">
 <meta property="og:site_name" content="MoTalks-默说">
-<meta property="og:description" content="自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文受用的对象是使用 Mac 以及真机调试的 Android 开发人员。最好确保你有个健全的网络（你懂的）。
+<meta property="og:description" content="本文来自：
+http://motalks.cn/2016/10/23/React_Native_Development_Environment/
+转载请注明来源。
 
-Homebrew号称是 MacOS 不可或缺的套件管理器，">
-<meta property="og:updated_time" content="2016-10-23T14:44:55.000Z">
+自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文">
+<meta property="og:updated_time" content="2016-10-25T04:54:08.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React Native  Android 开发环境搭建，只需4步。">
-<meta name="twitter:description" content="自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文受用的对象是使用 Mac 以及真机调试的 Android 开发人员。最好确保你有个健全的网络（你懂的）。
+<meta name="twitter:description" content="本文来自：
+http://motalks.cn/2016/10/23/React_Native_Development_Environment/
+转载请注明来源。
 
-Homebrew号称是 MacOS 不可或缺的套件管理器，">
+自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文">
 
 
 
@@ -368,9 +374,19 @@ Homebrew号称是 MacOS 不可或缺的套件管理器，">
       
 
       
-        <blockquote>
+        <p>本文来自：</p>
+<p><a href="http://motalks.cn/2016/10/23/React_Native_Development_Environment/">http://motalks.cn/2016/10/23/React_Native_Development_Environment/</a></p>
+<p>转载请注明来源。</p>
+<blockquote>
 <p>自己在搭建 React Native Android 版开发环境的时候，参考了很多文章，发现多数文章提供的资料过于繁杂，对于一个常年用真机调试的 Android 开发者来说，React Native 开发环境的搭建是可以更简单的。此文受用的对象是使用 Mac 以及真机调试的 Android 开发人员。最好确保你有个健全的网络（你懂的）。</p>
 </blockquote>
+<p>在 Mac 的环境下，搭建 React Native  Android 开发环境搭建只需要下面4步。</p>
+<ol>
+<li>安装 Homebrew 套件管理器</li>
+<li>安装 Node.js</li>
+<li>安装 React Native 的命令行工具</li>
+<li>ANDROID_HOME 的环境变量配置</li>
+</ol>
 <h4 id="Homebrew">Homebrew</h4><p>号称是 MacOS 不可或缺的套件管理器，反正就是你可以用它来下载安装 Node.js , React Native 命令行工具的工具。Homebrew 的中文介绍点<a href="http://brew.sh/index_zh-cn.html" target="_blank" rel="external">这里</a>。打开 Mac 终端，输入如下命令安装：</p>
 <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/ruby -e <span class="string">"$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"</span></span><br></pre></td></tr></table></figure>
 <p>安装完成后输入：</p>
@@ -387,7 +403,7 @@ Homebrew号称是 MacOS 不可或缺的套件管理器，">
 <p>咱使用下面这个检查 Node.js 版本号的命令来验证下。 </p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node -v</span><br></pre></td></tr></table></figure>
 <p>我的结果的是 <strong>v4.1.2</strong>  ，不知道是教程的问题还是我安装时选择的不同选项的问题。注：Node.js 官网也提供两个版本，一个是 LTS 长期提供支持的稳定版本，目前为 v4.6.0。另一个是当前最新版本，目前为 v6.8.1。v4.1.2 好歹还能用，先不纠结这个，继续下一步。</p>
-<h4 id="React_Native的命令行工具（react-native-cli）">React Native的命令行工具（react-native-cli）</h4><p>没什么好说的，React Native 的命令行工具用于执行创建、初始化、更新项目、运行打包服务（packager）等任务。安装命令如下：</p>
+<h4 id="React_Native_的命令行工具（react-native-cli）">React Native 的命令行工具（react-native-cli）</h4><p>没什么好说的，React Native 的命令行工具用于执行创建、初始化、更新项目、运行打包服务（packager）等任务。安装命令如下：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g react-native-cli</span><br></pre></td></tr></table></figure>
 <h4 id="环境变量配置">环境变量配置</h4><p>英文官网对 Android Studio 和 JDK 并没有提出具体的版本要求，大家可以用自己现有的开发环境试试。</p>
 <p><strong>ANDROID_HOME 环境变量</strong> ：确保<code>ANDROID_HOME</code>环境变量正确地指向了你安装的Android SDK的路径。具体的做法是把下面的命令加入到<code>~/.bash_profile</code>文件中。而小数点开头的文件在Finder中是隐藏的，并且这个文件有可能并不存在。请在终端下使用<code>sudo vi ~/.bash_profile</code>命令创建或编辑。</p>
@@ -611,7 +627,7 @@ Homebrew号称是 MacOS 不可或缺的套件管理器，">
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Homebrew"><span class="nav-number">1.</span> <span class="nav-text">Homebrew</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Node-js"><span class="nav-number">2.</span> <span class="nav-text">Node.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#React_Native的命令行工具（react-native-cli）"><span class="nav-number">3.</span> <span class="nav-text">React Native的命令行工具（react-native-cli）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#环境变量配置"><span class="nav-number">4.</span> <span class="nav-text">环境变量配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试你的第一个_React_Native_项目"><span class="nav-number">5.</span> <span class="nav-text">测试你的第一个 React Native 项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#真机运行的注意事项以及你可能会遇到的问题"><span class="nav-number">6.</span> <span class="nav-text">真机运行的注意事项以及你可能会遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#(Android_5-0及以上)使用adb_reverse命令"><span class="nav-number">6.1.</span> <span class="nav-text">(Android 5.0及以上)使用adb reverse命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#(Android_5-0以下)通过Wi-Fi连接你的本地开发服务器"><span class="nav-number">6.2.</span> <span class="nav-text">(Android 5.0以下)通过Wi-Fi连接你的本地开发服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可能会遇到的问题"><span class="nav-number">6.3.</span> <span class="nav-text">可能会遇到的问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#接下来的安排"><span class="nav-number">7.</span> <span class="nav-text">接下来的安排</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Homebrew"><span class="nav-number">1.</span> <span class="nav-text">Homebrew</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Node-js"><span class="nav-number">2.</span> <span class="nav-text">Node.js</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#React_Native_的命令行工具（react-native-cli）"><span class="nav-number">3.</span> <span class="nav-text">React Native 的命令行工具（react-native-cli）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#环境变量配置"><span class="nav-number">4.</span> <span class="nav-text">环境变量配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试你的第一个_React_Native_项目"><span class="nav-number">5.</span> <span class="nav-text">测试你的第一个 React Native 项目</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#真机运行的注意事项以及你可能会遇到的问题"><span class="nav-number">6.</span> <span class="nav-text">真机运行的注意事项以及你可能会遇到的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#(Android_5-0及以上)使用adb_reverse命令"><span class="nav-number">6.1.</span> <span class="nav-text">(Android 5.0及以上)使用adb reverse命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#(Android_5-0以下)通过Wi-Fi连接你的本地开发服务器"><span class="nav-number">6.2.</span> <span class="nav-text">(Android 5.0以下)通过Wi-Fi连接你的本地开发服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可能会遇到的问题"><span class="nav-number">6.3.</span> <span class="nav-text">可能会遇到的问题</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#接下来的安排"><span class="nav-number">7.</span> <span class="nav-text">接下来的安排</span></a></li></ol></div>
             
           </div>
         </section>
