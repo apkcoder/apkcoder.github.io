@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://motalks.cn/"/>
-  <updated>2016-10-26T08:49:01.000Z</updated>
+  <updated>2016-10-26T08:51:18.000Z</updated>
   <id>http://motalks.cn/</id>
   
   <author>
@@ -20,9 +20,9 @@
     <link href="http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/"/>
     <id>http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/</id>
     <published>2016-10-26T08:16:18.000Z</published>
-    <updated>2016-10-26T08:49:01.000Z</updated>
+    <updated>2016-10-26T08:51:18.000Z</updated>
     
-    <content type="html"><![CDATA[<p>原文链接：<a href="http://motalks.cn/2016/10/26/Integration_With_Existing_Apps/">http://motalks.cn/2016/10/26/Integration_With_Existing_Apps/</a> 转载请注明来源。</p>
+    <content type="html"><![CDATA[<p>原文链接：<a href="http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/">http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/</a> 转载请注明来源。</p>
 <blockquote>
 <p>由于公司的 Win 7 系统的台式机性能比较好，所以我又在 Windows 系统上又走了一遍 React Native 开发环境搭建和集成 React Native 到现有的 Android 项目的过程。在集成 React Native 这块 Mac 和 Windows 系统的差异倒是很小，坑比较多是环境搭建那块，回头在把 Windows 下的 React Native 环境搭建写写。最后还有一个忠告，买 Mac Book Pro 请直接上顶配，都是泪。</p>
 </blockquote>
@@ -85,7 +85,7 @@
     
     <summary type="html">
     
-      &lt;p&gt;原文链接：&lt;a href=&quot;http://motalks.cn/2016/10/26/Integration_With_Existing_Apps/&quot;&gt;http://motalks.cn/2016/10/26/Integration_With_Existing_Apps/&lt;
+      &lt;p&gt;原文链接：&lt;a href=&quot;http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/&quot;&gt;http://motalks.cn/2016/10/26/React_Native_Integr
     
     </summary>
     
