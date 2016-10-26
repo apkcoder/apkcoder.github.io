@@ -96,12 +96,13 @@
 <meta property="og:description" content="原文链接：http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/ 转载请注明来源。
 
 由于公司的 Win 7 系统的台式机性能比较好，所以我又在 Windows 系统上又走了一遍 React Native 开发环境搭建和集成 React Native 到现有的 Android 项目的过程。在集成 React">
-<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1018012-ef45964b235b83c9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/007_01.jpg">
+<meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/007_02.jpg">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/1018012-213b16d361058587.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/RN_DevSetting_Activity.jpg">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/rn_dev_setting.png">
 <meta property="og:image" content="http://7xnk0a.com1.z0.glb.clouddn.com/npm_start_success.png">
-<meta property="og:updated_time" content="2016-10-26T08:51:18.000Z">
+<meta property="og:updated_time" content="2016-10-26T08:57:32.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="集成 React Native 到现有的 Android 项目（ Mac, Windows 通用版 ）">
 <meta name="twitter:description" content="原文链接：http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/ 转载请注明来源。
@@ -381,12 +382,11 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm init</span><br><span class="line">npm <span class="operator"><span class="keyword">install</span> <span class="comment">--save react react-native</span></span><br><span class="line">curl -o .flowconfig https://<span class="keyword">raw</span>.githubusercontent.com/facebook/react-<span class="keyword">native</span>/<span class="keyword">master</span>/.flowconfig</span></span><br></pre></td></tr></table></figure>
 <p>下面分步讲解每个命令的作用:</p>
 <h4 id="关于_npm_init_命令">关于 npm init 命令</h4><p>这步操作会在项目根目录生成 package.json 文件。主要是些项目信息，这里会生成之后步骤需要的 ”scripts“ 字段，自己的过程忘记截图了，用了 <a href="http://www.jianshu.com/users/e630681e7001" target="_blank" rel="external">天空oo7 </a> 的图。</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/1018012-ef45964b235b83c9.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img"></p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/007_01.jpg" alt="img"></p>
 <p>接下来，将 package.json 文件中 scripts 字段下添加下面这句，同时也可以将 ”test“:”no” 这句删去。下面这句的作用应该是配置 ”start“ 命令的路径的。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">"<span class="operator"><span class="keyword">start</span><span class="string">": "</span>node node_modules/react-<span class="keyword">native</span>/<span class="keyword">local</span>-cli/cli.js <span class="keyword">start</span><span class="string">"</span></span></span><br></pre></td></tr></table></figure>
 <h4 id="关于_install_–save_react_react-native_命令">关于 install –save react react-native 命令</h4><p>用于初始化 React 和  React Native 相关文件，安装完成后会在项目的根目录下看到 node_modules 文件夹。</p>
-<p>![图片来自 天空007 ]</p>
-<p>(<a href="http://upload-images.jianshu.io/upload_images/1018012-29fba77bbeb4e975.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" target="_blank" rel="external">http://upload-images.jianshu.io/upload_images/1018012-29fba77bbeb4e975.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240</a>)</p>
+<p><img src="http://7xnk0a.com1.z0.glb.clouddn.com/007_02.jpg" alt="图片来自 天空007 "></p>
 <h4 id="关于_curl_命令">关于 curl 命令</h4><blockquote>
 <p>curl是利用URL语法在命令行方式下工作的开源文件传输工具。它被广泛应用在Unix、多种Linux发行版中，并且有DOS和Win32、Win64下的移植版本。</p>
 </blockquote>
