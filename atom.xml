@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://motalks.cn/"/>
-  <updated>2016-10-27T09:12:25.000Z</updated>
+  <updated>2016-10-27T09:20:38.000Z</updated>
   <id>http://motalks.cn/</id>
   
   <author>
@@ -16,11 +16,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
+    <title>React Native Android 开发环境搭建（Windows 版）</title>
     <link href="http://motalks.cn/2016/10/27/React_Native_Development_Environment_Windows/"/>
     <id>http://motalks.cn/2016/10/27/React_Native_Development_Environment_Windows/</id>
-    <published>2016-10-27T09:12:44.000Z</published>
-    <updated>2016-10-27T09:12:25.000Z</updated>
+    <published>2016-10-27T09:18:18.000Z</published>
+    <updated>2016-10-27T09:20:38.000Z</updated>
     
     <content type="html"><![CDATA[<blockquote>
 <p>补上之前说的 Windows 系统的 React Native 开发环境搭建，坑还是比 Mac 环境下的多些。此文的受众还是已经搭建过 Android 开发环境的同学。</p>
@@ -74,6 +74,10 @@
 <p><strong>问题二</strong></p>
 <p>摇一摇手机没办法出现 Reload Js 设置菜单</p>
 <p>解决办法：在小米和魅族系统中只要在应用管理的权限管理中开启悬浮窗权限即可解决。</p>
+<h3 id="相关文章">相关文章</h3><p><a href="http://motalks.cn/2016/10/23/React_Native_Development_Environment/#more">React Native Android 开发环境搭建（Mac版）</a></p>
+<p><a href="http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/">React Native 集成到现有的 Android 项目</a></p>
+<p>React Native 项目热更新（待更新）</p>
+<p>React Native 优化（包大小优化，预加载解决首次加载白屏等）（待更新）</p>
 ]]></content>
     
     <summary type="html">
@@ -85,6 +89,10 @@
     
     </summary>
     
+      <category term="Android学习" scheme="http://motalks.cn/categories/Android%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="React Native" scheme="http://motalks.cn/tags/React-Native/"/>
     
   </entry>
   
@@ -173,7 +181,7 @@
     <link href="http://motalks.cn/2016/10/23/React_Native_Development_Environment/"/>
     <id>http://motalks.cn/2016/10/23/React_Native_Development_Environment/</id>
     <published>2016-10-23T14:18:18.000Z</published>
-    <updated>2016-10-26T09:00:16.000Z</updated>
+    <updated>2016-10-27T09:16:39.000Z</updated>
     
     <content type="html"><![CDATA[<p>本文来自：</p>
 <p><a href="http://motalks.cn/2016/10/23/React_Native_Development_Environment/">http://motalks.cn/2016/10/23/React_Native_Development_Environment/</a></p>
@@ -242,9 +250,10 @@
 <p><strong>问题二</strong></p>
 <p>摇一摇手机没办法出现 Reload Js 设置菜单</p>
 <p>解决办法：在小米和魅族系统中只要在应用管理的权限管理中开启悬浮窗权限即可解决。</p>
-<h4 id="接下来的安排">接下来的安排</h4><p><a href="http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/">React Native 集成到现有的 Android 项目(已出)</a></p>
-<p>React Native 项目热更新</p>
-<p>React Native 优化（包大小优化，预加载解决首次加载白屏等）</p>
+<h4 id="接下来的安排">接下来的安排</h4><p><a href="http://motalks.cn/2016/10/27/React_Native_Development_Environment_Windows/">React Native Andoid 开发环境搭建（Windows 版）</a></p>
+<p><a href="http://motalks.cn/2016/10/26/React_Native_Integration_With_Existing_Apps/">React Native 集成到现有的 Android 项目</a></p>
+<p>React Native 项目热更新（待更新）</p>
+<p>React Native 优化（包大小优化，预加载解决首次加载白屏等）（待更新）</p>
 ]]></content>
     
     <summary type="html">
